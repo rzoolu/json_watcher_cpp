@@ -1,0 +1,54 @@
+{
+    "access_points": [
+        {
+            "ssid": "MyAP",
+            "snr": 63,
+            "channel": 11
+        },
+        {
+            "ssid": "YourAP",
+            "snr": 42,
+            "channel": 1
+        },
+        {
+            "ssid": "HisAP",
+            "snr": 54,
+            "channel": 6
+        },
+        {
+            "ssid": "MyAP2",
+            "snr": 92,
+            "channel": 5
+        },
+        {
+            "ssid": "YourAP2",
+            "snr": 52,
+            "channel": 4
+        },
+        {
+            "ssid": "HerAP2new",
+            "snr": 71,
+            "channel": 2
+        },
+        {
+            "ssid": "HerAP2new2",
+            "snr": 71,
+            "channel": 3
+        },
+        {
+            "ssid": "HOME1",
+            "snr": 12,
+            "channel": 4
+        },
+        {
+            "ssid": "HOME2",
+            "snr": 71,
+            "channel": 12
+        },
+        {
+            "ssid": "HOME3",
+            "snr": 71,
+            "channel": 10
+        }
+    ]
+}
