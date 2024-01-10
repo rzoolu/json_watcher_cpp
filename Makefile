@@ -19,7 +19,7 @@ HEADERS = $(wildcard $(SRC_DIR)/*.h)
 OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(SRC_DIR)/*.cpp))
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS)
-	$(CXX) -c -o $@ $< $(CFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 server: $(OBJS)
 	$(CXX) -o $@ $^ $(CXXLAGS) $(LIBS)
