@@ -30,7 +30,7 @@ OBJS += $(patsubst $(TEST_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(TEST_DIR)/*
 
 # remove real main to use test main
 TMPOBJS := $(OBJS)
-OBJS = $(filter-out $(BUILD_DIR)/server_main.o, $(TMPOBJS));
+OBJS = $(filter-out $(BUILD_DIR)/ServerMain.o, $(TMPOBJS));
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS)
 		$(CXX) -c -o $@ $< $(CXXFLAGS)
