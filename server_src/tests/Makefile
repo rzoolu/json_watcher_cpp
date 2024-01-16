@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -D DEBUG --std=c++17 -Wall -Wextra -ggdb
+CXXFLAGS = -D DEBUG --std=c++20 -Wall -Wextra -ggdb
 
 SRC_DIR = ..
 TEST_DIR = .

@@ -1,10 +1,11 @@
 CXX = g++
-CXXFLAGS = -D DEBUG --std=c++17 -Wall -Wextra -ggdb 
+CXXFLAGS = -D DEBUG --std=c++20 -Wall -Wextra -ggdb
 
 SRC_DIR = server_src
 3RDP_DIR = 3rdp
+COMMON_DIR = common
 
-IDIRS = -I$(SRC_DIR) -I$(3RDP_DIR)
+IDIRS = -I$(SRC_DIR) -I$(3RDP_DIR) -I$(COMMON_DIR)
 CXXFLAGS += $(IDIRS)
 
 BUILD_DIR = build
@@ -14,7 +15,7 @@ all: server
 .PHONY: clean
 
 # server
-HEADERS = $(wildcard $(SRC_DIR)/*.h)
+HEADERS = $(wildcard $(SRC_DIR)/*.h) $(wildcard $(COMMON_DIR)/*.h)
 
 OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(SRC_DIR)/*.cpp))
 
