@@ -1,81 +1,55 @@
-
 #include <array>
 #include <format>
 #include <iostream>
 #include <source_location>
 
+enum LogLevel
+{
+    ERROR,
+    INFO,
+    DEBUG,
+
+    LogLevelCount
+};
+
 struct LogImpl
 {
-    enum Level
-    {
-        Error,
-        Info,
-        Debug,
-
-        LevelCount
-    };
-
-    static constexpr std::array<const char*, LevelCount> logFormats =
+    static constexpr std::array<const char*, LogLevelCount> logFormats =
         {"ERR: {}:{}: {} \n",
          "INF: {}:{}: {} \n",
          "DBG: {}:{}: {} \n"};
 
-    template <Level level>
-    static std::string buildLog(const std::string& msg, const std::source_location& location)
-    {
-        static_assert(logFormats[level], "Level format is not set in LogImpl::logFormats");
+    static inline LogLevel currentLevel = DEBUG;
 
-        return std::format(logFormats[level], location.file_name(), location.line(), msg);
+    static void log(LogLevel level, const std::string& msg, const std::source_location& location)
+    {
+        std::cerr << std::vformat(logFormats[level],
+                                  std::make_format_args(location.file_name(), location.line(), msg));
     }
 };
 
-template <typename... Args>
-struct LOG_ERROR
+inline void setLogLevel(LogLevel level)
 {
-    LOG_ERROR(std::format_string<Args...> fmt,
-              Args&&... args,
-              const std::source_location location = std::source_location::current())
+    if (level < LogLevelCount)
     {
-        const auto& msg = std::format(fmt, std::forward<Args>(args)...);
-        std::cerr << LogImpl::buildLog<LogImpl::Error>(msg, location);
+        LogImpl::currentLevel = level;
     }
-};
+}
 
 template <typename... Args>
-LOG_ERROR(std::format_string<Args...> fmt, Args&&... args) -> LOG_ERROR<Args...>;
-
-template <typename... Args>
-struct LOG_INFO
+struct LOG
 {
-    LOG_INFO(std::format_string<Args...> fmt,
-             Args&&... args,
-             const std::source_location location = std::source_location::current())
+    LOG(LogLevel level,
+        std::format_string<Args...> fmt,
+        Args&&... args,
+        const std::source_location location = std::source_location::current())
     {
-        const auto& msg = std::format(fmt, std::forward<Args>(args)...);
-        std::cerr << LogImpl::buildLog<LogImpl::Info>(msg, location);
+        if (LogImpl::currentLevel >= level)
+        {
+            LogImpl::log(level, std::format(fmt, std::forward<Args>(args)...), location);
+        }
     }
 };
 
 template <typename... Args>
-LOG_INFO(std::format_string<Args...> fmt, Args&&... args) -> LOG_INFO<Args...>;
-
-#ifdef DEBUG
-
-template <typename... Args>
-struct LOG_DEBUG
-{
-    LOG_DEBUG(std::format_string<Args...> fmt,
-              Args&&... args,
-              const std::source_location location = std::source_location::current())
-    {
-        const auto& msg = std::format(fmt, std::forward<Args>(args)...);
-        std::cerr << LogImpl::buildLog<LogImpl::Debug>(msg, location);
-    }
-};
-
-template <typename... Args>
-LOG_DEBUG(std::format_string<Args...> fmt, Args&&... args) -> LOG_DEBUG<Args...>;
-
-#else
-#define LOG_DEBUG(...)
-#endif
+LOG(LogLevel level, std::format_string<Args...> fmt, Args&&... args) -> LOG<Args...>;

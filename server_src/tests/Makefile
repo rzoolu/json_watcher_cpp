@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -D DEBUG --std=c++20 -Wall -Wextra -ggdb
+CXXFLAGS = --std=c++20 -Wall -Wextra -ggdb
 
 SRC_DIR = ..
 TEST_DIR = .
@@ -36,7 +36,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS)
 		$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 $(BUILD_DIR)/%.o: $(TEST_DIR)/%.cpp $(HEADERS)
-		$(CXX) -c -o $@ $< $(CXXFLAGS)     
+		$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 tests: $(OBJS)
 		$(CXX) -o $@ $^ $(CXXFLAGS) $(LDIR) $(LIBS)

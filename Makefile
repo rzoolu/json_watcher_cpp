@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -D DEBUG --std=c++20 -Wall -Wextra -ggdb
+CXXFLAGS = --std=c++20 -Wall -Wextra -ggdb
 
 SRC_DIR = server_src
 3RDP_DIR = 3rdp
