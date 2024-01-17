@@ -7,8 +7,9 @@ FileMonitorI::FileMonitorFactory_t FileMonitorI::create = [](const std::filesyst
 };
 
 FileMonitor::FileMonitor(const std::filesystem::path& file, FileObserverI& observer)
-    : m_observer(observer),
-      m_path(file)
+    : m_path(file),
+      m_observer(observer)
+
 {
 }
 

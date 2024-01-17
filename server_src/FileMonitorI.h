@@ -25,5 +25,7 @@ public:
 
     static FileMonitorFactory_t create;
 
+    virtual ~FileMonitorI() = default;
+
     virtual void startMonitoring() = 0;
 };

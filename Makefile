@@ -1,5 +1,5 @@
-CXX = g++
-CXXFLAGS = --std=c++20 -Wall -Wextra -ggdb
+CXX = g++ #clang++
+CXXFLAGS = --std=c++20 -Wall -Wextra -ggdb  #-stdlib=libc++
 
 SRC_DIR = server_src
 3RDP_DIR = 3rdp
@@ -23,7 +23,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 server: $(OBJS)
-	$(CXX) -o $@ $^ $(CXXLAGS) $(LIBS)
+	$(CXX) -o $@ $^ $(CXXLAGS) $(LIBS) #-stdlib=libc++
 
 xsan_server: CXXLAGS += -fsanitize=address,undefined # -O1 -fno-omit-frame-pointer
 xsan_server: server
