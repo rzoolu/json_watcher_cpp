@@ -1,12 +1,15 @@
+#include <FileMonitorI.h>
 #include <Log.h>
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
+int main(int argc, char* argv[])
 {
     setLogLevel(DEBUG);
 
-    LOG(ERROR, "Hello main() error \"{:6}\" \"{:.5f}\" \"{:d}\" \"{:x}\"", 1, 1.0 / 3.0, 42, 255);
-
-    LOG(DEBUG, "Hello main() error \"{:6}\" \"{:.5f}\" \"{:d}\" \"{:x}\"", 1, 1.0 / 3.0, 42, 255);
+    LOG(DEBUG, "Server started, argc = {}", argc);
+    for (auto i = 0; i < argc; ++i)
+    {
+        LOG(DEBUG, "argv[{}] = {},", i, argv[i]);
+    }
 
     return 1;
 }

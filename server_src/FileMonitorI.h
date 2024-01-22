@@ -13,7 +13,10 @@ public:
         FileDeleted
     };
 
-    virtual void handleFileEvent(Event event);
+    virtual void handleFileEvent(Event event) = 0;
+
+protected:
+    ~FileObserverI() = default;
 };
 
 class FileMonitorI
