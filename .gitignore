@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+*.i*86
+*.hex
+client
+server
+tests
+!tests/
