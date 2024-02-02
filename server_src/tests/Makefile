@@ -47,7 +47,7 @@ tests: $(OBJS)
 valgrind: tests
 		valgrind -q --leak-check=full --show-leak-kinds=all  ./tests
 
-xsan: CFLAGS += -fsanitize=address,undefined # -O1 -fno-omit-frame-pointer
+xsan: CXXFLAGS += -fsanitize=address,undefined # -O1 -fno-omit-frame-pointer
 xsan: clean tests
 	./tests && rm -f $(BUILD_DIR)/*.o tests
 
