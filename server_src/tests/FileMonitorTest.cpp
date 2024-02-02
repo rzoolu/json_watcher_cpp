@@ -29,9 +29,9 @@ void asyncDelayedOperations(const std::filesystem::path& file, Ops&&... operatio
 template <typename... Ops>
 auto scheduleDeleyedFileOperations(const std::filesystem::path& file, Ops... operations)
 {
-    std::thread t(asyncDelayedOperations<Ops...>,
-                  std::cref(file),
-                  std::move(operations)...);
+    std::jthread t(asyncDelayedOperations<Ops...>,
+                   std::cref(file),
+                   std::move(operations)...);
 
     return t;
 }
@@ -99,8 +99,6 @@ TEST_F(FileMonitorTest, observerIsNotifiedWhenFileIsDeleted)
     auto fileOpsThread = scheduleDeleyedFileOperations(m_tmpFilePath, deleteFile);
 
     fileMonitor->startMonitoring();
-
-    fileOpsThread.join();
 }
 
 TEST_F(FileMonitorTest, observerIsNotifiedWhenFileIsModified)
@@ -117,8 +115,6 @@ TEST_F(FileMonitorTest, observerIsNotifiedWhenFileIsModified)
     auto fileOpsThread = scheduleDeleyedFileOperations(m_tmpFilePath, modifyFile, deleteFile);
 
     fileMonitor->startMonitoring();
-
-    fileOpsThread.join();
 }
 
 TEST_F(FileMonitorTest, observerIsNotifiedWhenFileIsModifiedMultipleTimes)
@@ -136,6 +132,4 @@ TEST_F(FileMonitorTest, observerIsNotifiedWhenFileIsModifiedMultipleTimes)
                                                        modifyFile, modifyFile, modifyFile, deleteFile);
 
     fileMonitor->startMonitoring();
-
-    fileOpsThread.join();
 }
