@@ -12,10 +12,13 @@ GTEST_INCLUDE = $(3RDP_DIR)/googletest/googletest/include
 GTEST_LIB = $(3RDP_DIR)/googletest/build/lib
 
 GMOCK_INCLUDE = $(3RDP_DIR)/googletest/googlemock/include
+NLOHMANN_INCLUDE = $(3RDP_DIR)/json/single_include
 
 LDIR = -L$(GTEST_LIB)
 
-IDIRS = -I$(SRC_DIR) -I$(COMMON_DIR) -I$(GTEST_INCLUDE) -I$(GMOCK_INCLUDE)
+IDIRS = -I$(SRC_DIR) -I$(COMMON_DIR) \
+		-I$(GTEST_INCLUDE) -I$(GMOCK_INCLUDE) -I$(NLOHMANN_INCLUDE)
+
 CXXFLAGS += $(IDIRS)
 
 LIBS = -lgtest -lgmock -lgtest_main

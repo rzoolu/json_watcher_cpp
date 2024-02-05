@@ -5,7 +5,9 @@ SRC_DIR = server_src
 3RDP_DIR = 3rdp
 COMMON_DIR = common
 
-IDIRS = -I$(SRC_DIR) -I$(3RDP_DIR) -I$(COMMON_DIR)
+NLOHMANN_INCLUDE = $(3RDP_DIR)/json/single_include
+
+IDIRS = -I$(SRC_DIR) -I$(COMMON_DIR) -I$(NLOHMANN_INCLUDE)
 CXXFLAGS += $(IDIRS)
 
 BUILD_DIR = build
