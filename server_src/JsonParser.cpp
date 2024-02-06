@@ -59,6 +59,10 @@ AccessPointMap_t JsonParser::creaateAccessPointMap(const json& aps)
             apMap.emplace(ssid,
                           AccessPoint{ssid, ap["snr"], ap["channel"]});
         }
+        else
+        {
+            LOG(ERROR, "JSON parsing, invalid AP entry.");
+        }
     }
 
     LOG(DEBUG, "JSON parsing, {} AP entries found.", apMap.size());
