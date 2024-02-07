@@ -1,16 +1,24 @@
 #pragma once
 
-#include <cstdint>
-#include <string>
-#include <unordered_map>
+#include <AccessPointsDataI.h>
 
-using Ssid_t = std::string;
-
-struct AccessPoint
+class AccessPointsData : public AccessPointsDataI
 {
-    Ssid_t SSID;
-    std::uint16_t SNR;
-    std::uint16_t channel;
-};
+public:
+    AccessPointsData();
+    ChangeList_t update(const AccessPointMap_t& newData) override;
+    const AccessPointMap_t& getCurrentAPs() const override;
 
-using AccessPointMap_t = std::unordered_map<Ssid_t, AccessPoint>;
+private:
+    void findNewOrModifiedAPs(const AccessPointMap_t& newData, ChangeList_t& changeList);
+    void findRemovedAPs(const AccessPointMap_t& newData, ChangeList_t& changeList);
+
+    void newApChange(const AccessPoint& newAp, ChangeList_t& changeList);
+    void removedApChange(const AccessPoint& oldAp, ChangeList_t& changeList);
+    void apParamsChanged(const AccessPoint& oldAp,
+                         const AccessPoint& newAp,
+                         ChangeList_t& changeList);
+
+private:
+    AccessPointMap_t m_currentAPs;
+};

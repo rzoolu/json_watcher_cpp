@@ -1,4 +1,4 @@
-#include <AccessPointsData.h>
+#include <AccessPointsDataI.h>
 #include <JsonParserI.h>
 
 #include <gtest/gtest.h>
