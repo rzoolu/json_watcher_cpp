@@ -1,5 +1,7 @@
 #include <AccessPointsData.h>
 
+#include <Log.h>
+
 AccessPointsDataI::AccessPointsDataFactory_t AccessPointsDataI::create = []()
 {
     return std::make_unique<AccessPointsData>();
@@ -12,6 +14,8 @@ const AccessPointMap_t& AccessPointsData::getCurrentAPs() const
 
 ChangeList_t AccessPointsData::update(const AccessPointMap_t& newData)
 {
+    LOG(DEBUG, "AccessPointsData updated");
+
     ChangeList_t changeList;
 
     findNewOrModifiedAPs(newData, changeList);
@@ -52,12 +56,16 @@ void AccessPointsData::findRemovedAPs(const AccessPointMap_t& newData, ChangeLis
 
 void AccessPointsData::newApChange(const AccessPoint& newAp, ChangeList_t& changeList)
 {
+    LOG(DEBUG, "AccessPointsData new AP detected: {}", newAp.SSID);
+
     changeList.emplace_back(
         APDataChange::NewAP, AccessPoint{}, newAp, std::vector<APDataChange::Param>{});
 }
 
 void AccessPointsData::removedApChange(const AccessPoint& oldAp, ChangeList_t& changeList)
 {
+    LOG(DEBUG, "AccessPointsData AP removal detected: {}", oldAp.SSID);
+
     changeList.emplace_back(
         APDataChange::RemovedAP, oldAp, AccessPoint{}, std::vector<APDataChange::Param>{});
 }
@@ -66,6 +74,7 @@ void AccessPointsData::apParamsChanged(const AccessPoint& oldAp,
                                        const AccessPoint& newAp,
                                        ChangeList_t& changeList)
 {
+    LOG(DEBUG, "AccessPointsData AP params change detected: {}", oldAp.SSID);
 
     std::vector<APDataChange::Param> changedParams;
 
