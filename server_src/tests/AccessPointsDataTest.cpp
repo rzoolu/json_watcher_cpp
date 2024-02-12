@@ -1,8 +1,9 @@
 #include <AccessPointsDataI.h>
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <algorithm>
+using namespace ::testing;
 
 namespace
 {
@@ -19,9 +20,8 @@ const AccessPointMap_t twoItemsMap{{AP1.SSID, AP1},
 TEST(AccessPointsDataTest, isEmtpyByDefault)
 {
     const auto apData = AccessPointsDataI::create();
-    const auto currentAPsMap = apData->getCurrentAPs();
 
-    ASSERT_EQ(currentAPsMap.size(), 0u);
+    ASSERT_THAT(apData->getCurrentAPs(), IsEmpty());
 }
 
 TEST(AccessPointsDataTest, properDataIsSet)
@@ -30,8 +30,7 @@ TEST(AccessPointsDataTest, properDataIsSet)
 
     apData->update(oneItemMap);
 
-    const auto currentAPsMap = apData->getCurrentAPs();
-    ASSERT_EQ(oneItemMap, currentAPsMap);
+    ASSERT_EQ(oneItemMap, apData->getCurrentAPs());
 }
 
 TEST(AccessPointsDataTest, changeListIsEmptyWhenNoChanges)
@@ -41,10 +40,9 @@ TEST(AccessPointsDataTest, changeListIsEmptyWhenNoChanges)
     apData->update(twoItemsMap);
     const ChangeList_t changeList = apData->update(twoItemsMap);
 
-    ASSERT_TRUE(changeList.empty());
+    ASSERT_THAT(changeList, IsEmpty());
 
-    const auto currentAPsMap = apData->getCurrentAPs();
-    ASSERT_EQ(twoItemsMap, currentAPsMap);
+    ASSERT_EQ(twoItemsMap, apData->getCurrentAPs());
 }
 
 TEST(AccessPointsDataTest, APAdditionIsDetected)
@@ -54,12 +52,11 @@ TEST(AccessPointsDataTest, APAdditionIsDetected)
     apData->update(oneItemMap);
     const ChangeList_t changeList = apData->update(twoItemsMap);
 
-    ASSERT_EQ(changeList.size(), 1u);
+    ASSERT_THAT(changeList, SizeIs(1));
     ASSERT_EQ(changeList[0].changeType, APDataChange::NewAP);
     ASSERT_EQ(changeList[0].newAP, AP2);
 
-    const auto currentAPsMap = apData->getCurrentAPs();
-    ASSERT_EQ(twoItemsMap, currentAPsMap);
+    ASSERT_EQ(twoItemsMap, apData->getCurrentAPs());
 }
 
 TEST(AccessPointsDataTest, TwoAPAdditionIsDetected)
@@ -68,7 +65,7 @@ TEST(AccessPointsDataTest, TwoAPAdditionIsDetected)
 
     const ChangeList_t changeList = apData->update(twoItemsMap);
 
-    ASSERT_EQ(changeList.size(), 2u);
+    ASSERT_THAT(changeList, SizeIs(2));
     ASSERT_EQ(changeList[0].changeType, APDataChange::NewAP);
     ASSERT_EQ(changeList[1].changeType, APDataChange::NewAP);
 }
@@ -80,12 +77,11 @@ TEST(AccessPointsDataTest, APRemovalIsDetected)
     apData->update(twoItemsMap);
     const ChangeList_t changeList = apData->update(oneItemMap);
 
-    ASSERT_EQ(changeList.size(), 1u);
+    ASSERT_THAT(changeList, SizeIs(1));
     ASSERT_EQ(changeList[0].changeType, APDataChange::RemovedAP);
     ASSERT_EQ(changeList[0].oldAP, AP2);
 
-    const auto currentAPsMap = apData->getCurrentAPs();
-    ASSERT_EQ(oneItemMap, currentAPsMap);
+    ASSERT_EQ(oneItemMap, apData->getCurrentAPs());
 }
 
 TEST(AccessPointsDataTest, APModificationIsDetected)
@@ -96,21 +92,17 @@ TEST(AccessPointsDataTest, APModificationIsDetected)
 
     auto moddifiedAP2Map = twoItemsMap;
 
+    // modify channel and SNR in AP2
     moddifiedAP2Map[AP2.SSID].channel++;
     moddifiedAP2Map[AP2.SSID].SNR++;
 
     const ChangeList_t changeList = apData->update(moddifiedAP2Map);
 
-    ASSERT_EQ(changeList.size(), 1u);
+    ASSERT_THAT(changeList, SizeIs(1));
     ASSERT_EQ(changeList[0].changeType, APDataChange::APParamsChanged);
     ASSERT_EQ(changeList[0].oldAP, AP2);
     ASSERT_EQ(changeList[0].newAP, moddifiedAP2Map[AP2.SSID]);
 
-    ASSERT_TRUE(std::find(changeList[0].changedParams.begin(),
-                          changeList[0].changedParams.end(),
-                          APDataChange::channnel) != changeList[0].changedParams.end());
-
-    ASSERT_TRUE(std::find(changeList[0].changedParams.begin(),
-                          changeList[0].changedParams.end(),
-                          APDataChange::SNR) != changeList[0].changedParams.end());
+    ASSERT_THAT(changeList[0].changedParams, Contains(APDataChange::channnel));
+    ASSERT_THAT(changeList[0].changedParams, Contains(APDataChange::SNR));
 }
