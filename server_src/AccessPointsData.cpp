@@ -5,10 +5,6 @@ AccessPointsDataI::AccessPointsDataFactory_t AccessPointsDataI::create = []()
     return std::make_unique<AccessPointsData>();
 };
 
-AccessPointsData::AccessPointsData() : m_currentAPs()
-{
-}
-
 const AccessPointMap_t& AccessPointsData::getCurrentAPs() const
 {
     return m_currentAPs;
@@ -26,28 +22,28 @@ ChangeList_t AccessPointsData::update(const AccessPointMap_t& newData)
 
 void AccessPointsData::findNewOrModifiedAPs(const AccessPointMap_t& newData, ChangeList_t& changeList)
 {
-    for (const auto& ap : newData)
+    for (const auto& [ssid, newAP] : newData)
     {
-        auto currentAPIt = m_currentAPs.find(ap.second.SSID);
+        auto currentAPIt = m_currentAPs.find(newAP.SSID);
 
         if (currentAPIt == m_currentAPs.end())
         {
-            newApChange(ap.second, changeList);
+            newApChange(newAP, changeList);
         }
-        else if (currentAPIt->second != ap.second)
+        else if (currentAPIt->second != newAP)
         {
-            apParamsChanged(currentAPIt->second, ap.second, changeList);
+            apParamsChanged(currentAPIt->second, newAP, changeList);
         }
     }
 }
 
 void AccessPointsData::findRemovedAPs(const AccessPointMap_t& newData, ChangeList_t& changeList)
 {
-    for (const auto& ap : m_currentAPs)
+    for (const auto& [ssid, currentAP] : m_currentAPs)
     {
-        if (!newData.contains(ap.second.SSID))
+        if (!newData.contains(currentAP.SSID))
         {
-            removedApChange(ap.second, changeList);
+            removedApChange(currentAP, changeList);
         }
     }
 }
