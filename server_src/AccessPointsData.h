@@ -6,6 +6,8 @@ class AccessPointsData : public AccessPointsDataI
 {
 public:
     AccessPointsData() = default;
+    ~AccessPointsData() override = default;
+
     const AccessPointMap_t& getCurrentAPs() const override;
     ChangeList_t update(const AccessPointMap_t& newData) override;
 

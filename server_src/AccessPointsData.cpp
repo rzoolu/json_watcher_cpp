@@ -17,6 +17,8 @@ ChangeList_t AccessPointsData::update(const AccessPointMap_t& newData)
     findNewOrModifiedAPs(newData, changeList);
     findRemovedAPs(newData, changeList);
 
+    m_currentAPs = newData;
+
     return changeList;
 }
 

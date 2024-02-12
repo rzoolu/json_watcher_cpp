@@ -52,8 +52,8 @@ public:
 
     static AccessPointsDataFactory_t create;
 
-    ~AccessPointsDataI() = default;
+    virtual ~AccessPointsDataI() = default;
 
-    virtual ChangeList_t update(const AccessPointMap_t& newData) = 0;
     virtual const AccessPointMap_t& getCurrentAPs() const = 0;
+    virtual ChangeList_t update(const AccessPointMap_t& newData) = 0;
 };
