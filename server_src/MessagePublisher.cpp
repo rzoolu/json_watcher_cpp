@@ -14,8 +14,11 @@ MessagePublisher::MessagePublisher(std::uint16_t tcpPort) : m_zmqContext(),
                                                             m_zmqSocket(m_zmqContext, zmq::socket_type::pub)
 {
     std::string tcpTransport("tcp://*:");
+    tcpTransport.append(std::to_string(tcpPort));
 
-    m_zmqSocket.bind(tcpTransport += std::to_string(tcpPort));
+    m_zmqSocket.bind(tcpTransport);
+
+    LOG(DEBUG, "MessagePublisher bound to {}", tcpTransport);
 }
 
 void MessagePublisher::sendToSubscribers(const std::string& msg)
@@ -31,5 +34,9 @@ void MessagePublisher::sendToSubscribers(const std::string& msg)
     if (!sendRes)
     {
         LOG(ERROR, "sendToSubscribers failed");
+    }
+    else
+    {
+        LOG(DEBUG, "sendToSubscribers msg sent.");
     }
 }
