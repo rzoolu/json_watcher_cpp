@@ -1,5 +1,11 @@
-CXX = g++ #clang++
-CXXFLAGS = --std=c++20 -Wall -Wextra -ggdb  #-stdlib=libc++
+CXX = g++ # or run 'make CXX=clang++' for clang
+
+ifeq ($(CXX),clang++)
+CXXFLAGS += -stdlib=libc++
+LDFLAGS += -stdlib=libc++
+endif
+
+CXXFLAGS += --std=c++20 -Wall -Wextra -ggdb
 
 SRC_DIR = server_src
 3RDP_DIR = 3rdp
@@ -25,7 +31,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 server: $(OBJS)
-	$(CXX) -o $@ $^ $(CXXLAGS) $(LIBS) #-stdlib=libc++
+	$(CXX) -o $@ $^ $(CXXLAGS) $(LIBS) $(LDFLAGS)
 
 xsan_server: CXXLAGS += -fsanitize=address,undefined # -O1 -fno-omit-frame-pointer
 xsan_server: server
