@@ -4,3 +4,6 @@
 [submodule "3rdp/json"]
 	path = 3rdp/json
 	url = git@github.com:nlohmann/json.git
+[submodule "3rdp/cppzmq"]
+	path = 3rdp/cppzmq
+	url = git@github.com:zeromq/cppzmq.git
