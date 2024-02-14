@@ -1,22 +1,33 @@
 #pragma once
 
+#include <FileMonitorI.h>
+
+#include <filesystem>
 #include <memory>
-#include <string_view>
 
-class JsonParserI;
 class FileMonitorI;
+class JsonParserI;
 class MessagePublisherI;
+class AccessPointsDataI;
 
-class ServerApp
+class ServerApp : public FileObserverI
 {
 public:
-    ServerApp(std::string_view apFilePath);
+    ServerApp(const std::filesystem::path& apFile);
     ~ServerApp();
 
-    int run();
+    void run();
 
 private:
+    void handleFileEvent(FileObserverI::Event event) override;
+
+private:
+    void apFileModified();
+
+private:
+    std::filesystem::path m_apFile;
     std::unique_ptr<FileMonitorI> m_fileMonitor;
     std::unique_ptr<JsonParserI> m_jsonParser;
+    std::unique_ptr<AccessPointsDataI> m_apData;
     std::unique_ptr<MessagePublisherI> m_msgPublisher;
 };

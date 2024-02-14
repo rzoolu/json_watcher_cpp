@@ -108,5 +108,8 @@ int main(int argc, char* argv[])
     }
 
     ServerApp app(options.at(OPTION_FILE_PATH));
-    return app.run();
+    LOG(DEBUG, "App started.");
+    app.run();
+
+    return 0;
 }
