@@ -14,8 +14,6 @@ const AccessPointMap_t& AccessPointsData::getCurrentAPs() const
 
 ChangeList_t AccessPointsData::update(const AccessPointMap_t& newData)
 {
-    LOG(DEBUG, "AccessPointsData updated");
-
     ChangeList_t changeList;
 
     findNewOrModifiedAPs(newData, changeList);
@@ -23,6 +21,7 @@ ChangeList_t AccessPointsData::update(const AccessPointMap_t& newData)
 
     if (!changeList.empty())
     {
+        LOG(DEBUG, "AccessPointsData updated.");
         m_currentAPs = newData;
     }
 
