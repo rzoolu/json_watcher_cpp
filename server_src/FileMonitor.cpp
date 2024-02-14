@@ -18,8 +18,14 @@ FileMonitor::FileMonitor(const std::filesystem::path& file, FileObserverI& obser
       m_observer(observer),
       m_inotifyFileDesc(INVALID_FD),
       m_fileWatchDesc(INVALID_FD)
-
 {
+    if (!std::filesystem::exists(file) ||
+        !std::filesystem::is_regular_file(file))
+    {
+        LOG(ERROR, "File {} doesn't exist.", file.string());
+        throw std::runtime_error("File: " + file.string() + " doesn't exists.");
+    }
+
     m_inotifyFileDesc = inotify_init();
 
     if (m_inotifyFileDesc == INVALID_FD)

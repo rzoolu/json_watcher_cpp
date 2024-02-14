@@ -19,7 +19,7 @@ struct LogImpl
          "INF: {}:{}: {} \n",
          "DBG: {}:{}: {} \n"};
 
-    static inline LogLevel currentLevel = DEBUG;
+    static inline LogLevel currentLevel = INFO;
 
     static void log(LogLevel level, const std::string& msg, const std::source_location& location)
     {
