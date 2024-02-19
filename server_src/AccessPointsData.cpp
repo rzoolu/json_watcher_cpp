@@ -24,6 +24,10 @@ ChangeList_t AccessPointsData::update(const AccessPointMap_t& newData)
         LOG(DEBUG, "AccessPointsData updated.");
         m_currentAPs = newData;
     }
+    else
+    {
+        LOG(DEBUG, "No data changes detected.");
+    }
 
     return changeList;
 }

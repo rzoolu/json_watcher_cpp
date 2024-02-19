@@ -37,6 +37,6 @@ void MessagePublisher::sendToSubscribers(const std::string& msg)
     }
     else
     {
-        LOG(DEBUG, "sendToSubscribers msg sent.");
+        LOG(DEBUG, "sendToSubscribers msg [{}] sent.", msg);
     }
 }

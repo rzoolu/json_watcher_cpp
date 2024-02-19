@@ -1,5 +1,6 @@
 #pragma once
 
+#include <AccessPointsDataI.h>
 #include <FileMonitorI.h>
 
 #include <filesystem>
@@ -8,7 +9,6 @@
 class FileMonitorI;
 class JsonParserI;
 class MessagePublisherI;
-class AccessPointsDataI;
 
 class ServerApp : public FileObserverI
 {
@@ -23,6 +23,7 @@ private:
 
 private:
     void apFileModified();
+    void sendChangeMessages(const ChangeList_t& changeList);
 
 private:
     std::filesystem::path m_apFile;
