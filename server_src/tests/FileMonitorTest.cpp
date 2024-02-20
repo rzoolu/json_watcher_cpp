@@ -1,5 +1,7 @@
 #include <FileMonitorI.h>
 
+#include "mocks/MockFileObserver.h"
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -8,12 +10,6 @@
 
 #include <fcntl.h>
 #include <unistd.h>
-
-class MockFileObserverI : public FileObserverI
-{
-public:
-    MOCK_METHOD(void, handleFileEvent, (FileObserverI::Event), (override));
-};
 
 namespace
 {
@@ -90,7 +86,7 @@ protected:
 
 TEST_F(FileMonitorTest, observerIsNotifiedWhenFileIsDeleted)
 {
-    MockFileObserverI mockFileObs;
+    MockFileObserver mockFileObs;
 
     EXPECT_CALL(mockFileObs, handleFileEvent(FileObserverI::FileDeleted));
 
@@ -103,7 +99,7 @@ TEST_F(FileMonitorTest, observerIsNotifiedWhenFileIsDeleted)
 
 TEST_F(FileMonitorTest, observerIsNotifiedWhenFileIsModified)
 {
-    MockFileObserverI mockFileObs;
+    MockFileObserver mockFileObs;
 
     EXPECT_CALL(mockFileObs, handleFileEvent(FileObserverI::FileModified));
 
@@ -119,7 +115,7 @@ TEST_F(FileMonitorTest, observerIsNotifiedWhenFileIsModified)
 
 TEST_F(FileMonitorTest, observerIsNotifiedWhenFileIsModifiedMultipleTimes)
 {
-    MockFileObserverI mockFileObs;
+    MockFileObserver mockFileObs;
 
     EXPECT_CALL(mockFileObs, handleFileEvent(FileObserverI::FileModified)).Times(3);
 

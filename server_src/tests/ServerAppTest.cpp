@@ -1,10 +1,10 @@
 
 #include <ServerApp.h>
 
-#include <AccessPointsDataI.h>
-#include <FileMonitorI.h>
-#include <JsonParserI.h>
-#include <MessagePublisherI.h>
+#include "mocks/MockAccessPointsData.h"
+#include "mocks/MockFileMonitor.h"
+#include "mocks/MockJsonParser.h"
+#include "mocks/MockMessagePublisher.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -12,32 +12,6 @@
 using testing::_;
 using testing::Return;
 using testing::StartsWith;
-
-class MockAccessPointsData : public AccessPointsDataI
-{
-public:
-    MOCK_METHOD(const AccessPointMap_t&, getCurrentAPs, (), (const, override));
-    MOCK_METHOD(ChangeList_t, update, (const AccessPointMap_t&), (override));
-};
-
-class MockFileMonitor : public FileMonitorI
-{
-public:
-    MOCK_METHOD(void, startMonitoring, (), (override));
-};
-
-class MockJsonParser : public JsonParserI
-{
-public:
-    MOCK_METHOD(std::optional<AccessPointMap_t>, parseFromStream, (std::istream & stream), (override));
-    MOCK_METHOD(std::optional<AccessPointMap_t>, parseFromFile, (const std::filesystem::path&), (override));
-};
-
-class MockMessagePublisher : public MessagePublisherI
-{
-public:
-    MOCK_METHOD(void, sendToSubscribers, (const std::string&), (override));
-};
 
 namespace
 {

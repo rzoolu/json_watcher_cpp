@@ -27,7 +27,7 @@ TEST_LIBS = -lgtest -lgmock -lgtest_main
 LIBS = -lzmq
 LIBS += $(TEST_LIBS)
 
-BUILD_DIR = .
+BUILD_DIR = ./build
 
 default: tests
 all: tests
