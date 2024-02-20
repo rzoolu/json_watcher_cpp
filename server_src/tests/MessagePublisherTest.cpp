@@ -19,11 +19,13 @@ std::string subscribeAndRecieve()
 
     subscriber.connect(tcpTransport + std::to_string(UT_TCP_PORT));
     subscriber.set(zmq::sockopt::subscribe, "");
+    // prevent infinite waiting, if test thread was faster
+    subscriber.set(zmq::sockopt::rcvtimeo, 1000);
 
     zmq::message_t receivedMsg;
     const auto recvRes = subscriber.recv(receivedMsg);
 
-    assert(recvRes.has_value());
+    assert(recvRes.has_value() && "No message to receive, perhaps waiting timer in test should be increased.");
 
     return receivedMsg.to_string();
 }
@@ -43,7 +45,7 @@ TEST(MessagePublisher, sendMessage)
 
     auto subThreadRes = std::async(std::launch::async, subscribeAndRecieve);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
     const std::string sentMsg("MESSAGE_BODY");
 
