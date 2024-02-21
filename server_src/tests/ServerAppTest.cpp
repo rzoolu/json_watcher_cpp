@@ -3,20 +3,26 @@
 
 #include "mocks/MockAccessPointsData.h"
 #include "mocks/MockFileMonitor.h"
+#include "mocks/MockFileMonitorFactory.h"
 #include "mocks/MockJsonParser.h"
 #include "mocks/MockMessagePublisher.h"
+#include "mocks/MockMessagePublisherFactory.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <filesystem>
+
 using testing::_;
+using testing::MockFunction;
 using testing::Return;
 using testing::StartsWith;
 
 namespace
 {
-constexpr auto DUMMY_JSON_PATH = "/dummy/path/ap.json";
-}
+const std::filesystem::path DUMMY_JSON_PATH("/dummy/path/ap.json");
+constexpr auto APP_TCP_PORT = 8282;
+} // namespace
 
 class ServerAppTest : public testing::Test
 {
@@ -26,12 +32,23 @@ protected:
         setupMocksInFactories();
     }
 
+    ~ServerAppTest()
+    {
+        restoreOrigianalFactories();
+    }
+
     void setupMocksInFactories()
     {
         setupMockAccessPointsDataFactory();
         setupMockFileMonitorFactory();
         setupMockJsonParserFactory();
         setupMockMessagePublisherFactory();
+    }
+
+    void restoreOrigianalFactories()
+    {
+        restoreMessagePublisherFactory();
+        restoreFileMonitorFactory();
     }
 
     void setupMockAccessPointsDataFactory()
@@ -46,13 +63,16 @@ protected:
 
     void setupMockFileMonitorFactory()
     {
-        FileMonitorI::create = [this]([[maybe_unused]] const std::filesystem::path& file,
-                                      [[maybe_unused]] FileObserverI& observer)
+        auto createMock = [this]([[maybe_unused]] const std::filesystem::path& file,
+                                 [[maybe_unused]] FileObserverI& observer)
         {
             auto uptr = std::make_unique<MockFileMonitor>();
             m_mockFileMonitor = uptr.get();
             return uptr;
         };
+
+        useFileMonitorFactoryMock(m_mockFileMonitorFactory);
+        ON_CALL(m_mockFileMonitorFactory, Call(_, _)).WillByDefault(createMock);
     }
 
     void setupMockJsonParserFactory()
@@ -67,12 +87,15 @@ protected:
 
     void setupMockMessagePublisherFactory()
     {
-        MessagePublisherI::create = [this]([[maybe_unused]] std::uint16_t tcpPort)
+        auto createMock = [this]()
         {
             auto uptr = std::make_unique<MockMessagePublisher>();
             m_mockMessagePublisher = uptr.get();
             return uptr;
         };
+
+        useMessagePublisherFactoryMock(m_mockMessagePublisherFactory);
+        ON_CALL(m_mockMessagePublisherFactory, Call(_)).WillByDefault(createMock);
     }
 
 protected:
@@ -80,6 +103,9 @@ protected:
     MockFileMonitor* m_mockFileMonitor = nullptr;
     MockJsonParser* m_mockJsonParser = nullptr;
     MockMessagePublisher* m_mockMessagePublisher = nullptr;
+
+    MessagePublisherFactoryMock_t m_mockMessagePublisherFactory;
+    FileMonitorFactoryMock_t m_mockFileMonitorFactory;
 };
 
 class ServerAppCreatedTest : public ServerAppTest
@@ -94,6 +120,20 @@ protected:
 
 TEST_F(ServerAppTest, createDestroyGracefully)
 {
+    ServerApp app(DUMMY_JSON_PATH);
+}
+
+TEST_F(ServerAppTest, whenServerAppIsCreatedMessagePublisherIsCratedOnProperTcpPort)
+{
+    EXPECT_CALL(m_mockMessagePublisherFactory, Call(APP_TCP_PORT));
+
+    ServerApp app(DUMMY_JSON_PATH);
+}
+
+TEST_F(ServerAppTest, whenServerAppIsCreatedFileMonitorIsCratedWithProperPath)
+{
+    EXPECT_CALL(m_mockFileMonitorFactory, Call(DUMMY_JSON_PATH, _));
+
     ServerApp app(DUMMY_JSON_PATH);
 }
 
