@@ -38,8 +38,6 @@ HEADERS = $(wildcard $(SRC_DIR)/*.h) $(wildcard $(COMMON_DIR)/*.h)
 
 OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(SRC_DIR)/*.cpp))
 OBJS += $(patsubst $(TEST_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(TEST_DIR)/*.cpp))
-OBJS += $(patsubst $(MOCKS_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(MOCKS_DIR)/*.cpp))
-
 
 # remove real main to use test main
 TMPOBJS := $(OBJS)
@@ -50,9 +48,6 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS)
 
 $(BUILD_DIR)/%.o: $(TEST_DIR)/%.cpp $(HEADERS)
 		$(CXX) -c -o $@ $< $(CXXFLAGS)
-
-$(BUILD_DIR)/%.o: $(MOCKS_DIR)/%.cpp $(HEADERS)
-	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 
 tests: $(OBJS)
