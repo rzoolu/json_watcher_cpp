@@ -183,7 +183,7 @@ TEST_F(ServerAppCreatedTest, whenAfterDataUpdateChangeIsDetectedMsgIsSent)
 
     EXPECT_CALL(*m_mockJsonParser, parseFromFile).WillOnce(Return(validParsingResult));
 
-    const APDataChange newApChange{APDataChange::NewAP, {}, validAp, {}};
+    const APDataChange_t newApChange{NewApChange{validAp}};
     const ChangeList_t changeList{newApChange};
 
     EXPECT_CALL(*m_mockAccessPointData, update(*validParsingResult)).WillOnce(Return(changeList));

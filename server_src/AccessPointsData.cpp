@@ -64,16 +64,14 @@ void AccessPointsData::newApChange(const AccessPoint& newAp, ChangeList_t& chang
 {
     LOG(DEBUG, "AccessPointsData new AP detected: {}", newAp.SSID);
 
-    changeList.emplace_back(
-        APDataChange::NewAP, AccessPoint{}, newAp, std::vector<APDataChange::Param>{});
+    changeList.emplace_back(NewApChange{newAp});
 }
 
 void AccessPointsData::removedApChange(const AccessPoint& oldAp, ChangeList_t& changeList)
 {
     LOG(DEBUG, "AccessPointsData AP removal detected: {}", oldAp.SSID);
 
-    changeList.emplace_back(
-        APDataChange::RemovedAP, oldAp, AccessPoint{}, std::vector<APDataChange::Param>{});
+    changeList.emplace_back(RemovedApChange{oldAp});
 }
 
 void AccessPointsData::apParamsChanged(const AccessPoint& oldAp,
@@ -82,18 +80,19 @@ void AccessPointsData::apParamsChanged(const AccessPoint& oldAp,
 {
     LOG(DEBUG, "AccessPointsData AP params change detected: {}", oldAp.SSID);
 
-    std::vector<APDataChange::Param> changedParams;
+    std::vector<ModifiedApParamsChange::Param> changedParams;
 
     if (oldAp.SNR != newAp.SNR)
     {
-        changedParams.push_back(APDataChange::SNR);
+        changedParams.push_back(ModifiedApParamsChange::SNR);
     }
 
     if (oldAp.channel != newAp.channel)
     {
-        changedParams.push_back(APDataChange::channnel);
+        changedParams.push_back(ModifiedApParamsChange::channnel);
     }
 
-    changeList.emplace_back(
-        APDataChange::APParamsChanged, oldAp, newAp, std::move(changedParams));
+    changeList.emplace_back(ModifiedApParamsChange{oldAp,
+                                                   newAp,
+                                                   std::move(changedParams)});
 }

@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <variant>
 
 using namespace ::testing;
 
@@ -56,8 +57,8 @@ TEST(AccessPointsDataTest, APAdditionIsDetected)
     const ChangeList_t changeList = apData->update(twoItemsMap);
 
     ASSERT_THAT(changeList, SizeIs(1));
-    ASSERT_EQ(changeList[0].changeType, APDataChange::NewAP);
-    ASSERT_EQ(changeList[0].newAP, AP2);
+    ASSERT_TRUE(std::holds_alternative<NewApChange>(changeList[0]));
+    ASSERT_EQ(std::get<NewApChange>(changeList[0]).newAP, AP2);
 
     ASSERT_EQ(twoItemsMap, apData->getCurrentAPs());
 }
@@ -69,8 +70,8 @@ TEST(AccessPointsDataTest, TwoAPAdditionIsDetected)
     const ChangeList_t changeList = apData->update(twoItemsMap);
 
     ASSERT_THAT(changeList, SizeIs(2));
-    ASSERT_EQ(changeList[0].changeType, APDataChange::NewAP);
-    ASSERT_EQ(changeList[1].changeType, APDataChange::NewAP);
+    ASSERT_TRUE(std::holds_alternative<NewApChange>(changeList[0]));
+    ASSERT_TRUE(std::holds_alternative<NewApChange>(changeList[1]));
 }
 
 TEST(AccessPointsDataTest, APRemovalIsDetected)
@@ -81,8 +82,8 @@ TEST(AccessPointsDataTest, APRemovalIsDetected)
     const ChangeList_t changeList = apData->update(oneItemMap);
 
     ASSERT_THAT(changeList, SizeIs(1));
-    ASSERT_EQ(changeList[0].changeType, APDataChange::RemovedAP);
-    ASSERT_EQ(changeList[0].oldAP, AP2);
+    ASSERT_TRUE(std::holds_alternative<RemovedApChange>(changeList[0]));
+    ASSERT_EQ(std::get<RemovedApChange>(changeList[0]).oldAP, AP2);
 
     ASSERT_EQ(oneItemMap, apData->getCurrentAPs());
 }
@@ -102,12 +103,15 @@ TEST(AccessPointsDataTest, APModificationIsDetected)
     const ChangeList_t changeList = apData->update(moddifiedAP2Map);
 
     ASSERT_THAT(changeList, SizeIs(1));
-    ASSERT_EQ(changeList[0].changeType, APDataChange::APParamsChanged);
-    ASSERT_EQ(changeList[0].oldAP, AP2);
-    ASSERT_EQ(changeList[0].newAP, moddifiedAP2Map[AP2.SSID]);
+    ASSERT_TRUE(std::holds_alternative<ModifiedApParamsChange>(changeList[0]));
 
-    ASSERT_THAT(changeList[0].changedParams, Contains(APDataChange::channnel));
-    ASSERT_THAT(changeList[0].changedParams, Contains(APDataChange::SNR));
+    const auto& modifiedApChange = std::get<ModifiedApParamsChange>(changeList[0]);
+
+    ASSERT_EQ(modifiedApChange.oldAP, AP2);
+    ASSERT_EQ(modifiedApChange.newAP, moddifiedAP2Map[AP2.SSID]);
+
+    ASSERT_THAT(modifiedApChange.changedParams, Contains(ModifiedApParamsChange::channnel));
+    ASSERT_THAT(modifiedApChange.changedParams, Contains(ModifiedApParamsChange::SNR));
 }
 
 TEST(AccessPointsDataTest, APModificationAndAdditionIsDetected)
@@ -128,18 +132,19 @@ TEST(AccessPointsDataTest, APModificationAndAdditionIsDetected)
     const auto paramsModifiedChange =
         std::find_if(changeList.begin(),
                      changeList.end(),
-                     [](const APDataChange& change)
-                     { return change.changeType == APDataChange::APParamsChanged; });
+                     [](const APDataChange_t& change)
+                     { return std::holds_alternative<ModifiedApParamsChange>(change); });
 
     ASSERT_TRUE(paramsModifiedChange != changeList.end());
-    ASSERT_THAT(paramsModifiedChange->changedParams, Contains(APDataChange::channnel));
+    ASSERT_THAT(std::get<ModifiedApParamsChange>(*paramsModifiedChange).changedParams,
+                Contains(ModifiedApParamsChange::channnel));
 
     const auto newAPChange =
         std::find_if(changeList.begin(),
                      changeList.end(),
-                     [](const APDataChange& change)
-                     { return change.changeType == APDataChange::NewAP; });
+                     [](const APDataChange_t& change)
+                     { return std::holds_alternative<NewApChange>(change); });
 
     ASSERT_TRUE(newAPChange != changeList.end());
-    ASSERT_EQ(newAPChange->newAP, AP3);
+    ASSERT_EQ(std::get<NewApChange>(*newAPChange).newAP, AP3);
 }

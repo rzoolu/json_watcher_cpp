@@ -7,8 +7,30 @@
 #include <algorithm>
 #include <cassert>
 #include <string>
+#include <variant>
 
 constexpr auto APP_TCP_PORT = 8282;
+
+namespace
+{
+struct changeToMessageConverter
+{
+    std::string operator()(const NewApChange& change)
+    {
+        return std::string("New AP: ") + change.newAP.SSID;
+    }
+
+    std::string operator()(const RemovedApChange& change)
+    {
+        return std::string("Removed AP: ") + change.oldAP.SSID;
+    }
+
+    std::string operator()(const ModifiedApParamsChange& change)
+    {
+        return std::string("Changed AP: ") + change.oldAP.SSID;
+    }
+};
+} // namespace
 
 ServerApp::ServerApp(const std::filesystem::path& apFile)
     : m_apFile(apFile),
@@ -57,28 +79,15 @@ void ServerApp::apFileModified()
 
 void ServerApp::sendChangeMessages(const ChangeList_t& changeList)
 {
-    std::vector<std::string> messages;
-
-    const auto changeToMsg = [](const APDataChange& change)
+    const auto changeToMsg = [](const APDataChange_t& change)
     {
-        switch (change.changeType)
-        {
-        case APDataChange::NewAP:
-            return std::string("New AP: ") + change.newAP.SSID;
-        case APDataChange::RemovedAP:
-            return std::string("Removed AP: ") + change.oldAP.SSID;
-        case APDataChange::APParamsChanged:
-            return std::string("Changed AP: ") + change.oldAP.SSID;
-        default:
-            LOG(ERROR, "Unknown APDataChange::Type {}.", static_cast<int>(change.changeType));
-            assert(false);
-            return std::string();
-        }
+        return std::visit(changeToMessageConverter{}, change);
     };
 
+    std::vector<std::string> messages;
+
     std::transform(changeList.begin(), changeList.end(),
-                   std::back_inserter(messages),
-                   changeToMsg);
+                   std::back_inserter(messages), changeToMsg);
 
     for (const auto& msg : messages)
     {

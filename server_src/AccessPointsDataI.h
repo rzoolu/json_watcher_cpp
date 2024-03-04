@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 using Ssid_t = std::string;
@@ -20,15 +21,18 @@ struct AccessPoint
 
 using AccessPointMap_t = std::unordered_map<Ssid_t, AccessPoint>;
 
-struct APDataChange
+struct NewApChange
 {
-    enum Type
-    {
-        NewAP,
-        RemovedAP,
-        APParamsChanged
-    };
+    AccessPoint newAP;
+};
 
+struct RemovedApChange
+{
+    AccessPoint oldAP;
+};
+
+struct ModifiedApParamsChange
+{
     enum Param
     {
         None,
@@ -36,13 +40,15 @@ struct APDataChange
         channnel,
     };
 
-    Type changeType;
     AccessPoint oldAP;
     AccessPoint newAP;
     std::vector<Param> changedParams;
 };
 
-using ChangeList_t = std::vector<APDataChange>;
+using APDataChange_t =
+    std::variant<NewApChange, RemovedApChange, ModifiedApParamsChange>;
+
+using ChangeList_t = std::vector<APDataChange_t>;
 
 class AccessPointsDataI
 {
