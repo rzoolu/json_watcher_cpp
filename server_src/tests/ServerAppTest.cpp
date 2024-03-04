@@ -26,7 +26,10 @@ constexpr auto APP_TCP_PORT = 8282;
 class ServerAppTest : public testing::Test
 {
 protected:
-    ServerAppTest()
+    ServerAppTest() : m_mockAccessPointsDataFactory(AccessPointsDataI::create),
+                      m_mockFileMonitorFactory(FileMonitorI::create),
+                      m_mockJsonParserFactory(JsonParserI::create),
+                      m_mockMessagePublisherFactory(MessagePublisherI::create)
     {
         setupMocksInFactories();
     }
@@ -41,12 +44,14 @@ protected:
 
     void setupMockAccessPointsDataFactory()
     {
-        AccessPointsDataI::create = [this]()
+        auto createMock = [this]()
         {
             auto uptr = std::make_unique<MockAccessPointsData>();
             m_mockAccessPointData = uptr.get();
             return uptr;
         };
+
+        ON_CALL(m_mockAccessPointsDataFactory, Call()).WillByDefault(createMock);
     }
 
     void setupMockFileMonitorFactory()
@@ -63,12 +68,14 @@ protected:
 
     void setupMockJsonParserFactory()
     {
-        JsonParserI::create = [this]()
+        auto createMock = [this]()
         {
             auto uptr = std::make_unique<MockJsonParser>();
             m_mockJsonParser = uptr.get();
             return uptr;
         };
+
+        ON_CALL(m_mockJsonParserFactory, Call()).WillByDefault(createMock);
     }
 
     void setupMockMessagePublisherFactory()
@@ -84,14 +91,15 @@ protected:
     }
 
 protected:
+    MockFactory<AccessPointsDataI::AccessPointsDataFactory_t> m_mockAccessPointsDataFactory;
+    MockFactory<FileMonitorI::FileMonitorFactory_t> m_mockFileMonitorFactory;
+    MockFactory<JsonParserI::JsonParserFactory_t> m_mockJsonParserFactory;
+    MockFactory<MessagePublisherI::MessagePublisherFactory_t> m_mockMessagePublisherFactory;
+
     MockAccessPointsData* m_mockAccessPointData = nullptr;
     MockFileMonitor* m_mockFileMonitor = nullptr;
     MockJsonParser* m_mockJsonParser = nullptr;
     MockMessagePublisher* m_mockMessagePublisher = nullptr;
-
-    // MockFactory<FileMonitorI::FileMonitorFactory_t> ?
-    MockFactory<FileMonitorI(const std::filesystem::path&, FileObserverI&)> m_mockFileMonitorFactory;
-    MockFactory<MessagePublisherI(std::uint16_t)> m_mockMessagePublisherFactory;
 };
 
 class ServerAppCreatedTest : public ServerAppTest
