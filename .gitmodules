@@ -7,3 +7,6 @@
 [submodule "3rdp/cppzmq"]
 	path = 3rdp/cppzmq
 	url = git@github.com:zeromq/cppzmq.git
+[submodule "3rdp/protobuf"]
+	path = 3rdp/protobuf
+	url = git@github.com:protocolbuffers/protobuf.git
