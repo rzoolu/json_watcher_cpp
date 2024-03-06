@@ -10,3 +10,5 @@
 [submodule "3rdp/protobuf"]
 	path = 3rdp/protobuf
 	url = git@github.com:protocolbuffers/protobuf.git
+	ignore = untracked
+
