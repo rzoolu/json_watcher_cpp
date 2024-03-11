@@ -1,6 +1,8 @@
 
 #include <ServerApp.h>
 
+#include <ApWatchI.pb.h>
+
 #include "mocks/MockAccessPointsData.h"
 #include "mocks/MockFactory.h"
 #include "mocks/MockFileMonitor.h"
@@ -15,6 +17,7 @@
 using testing::_;
 using testing::MockFunction;
 using testing::Return;
+using testing::SaveArg;
 using testing::StartsWith;
 
 namespace
@@ -175,7 +178,7 @@ TEST_F(ServerAppCreatedTest, whenNewJsonContentIsValidApDataIsUpdatedWithIt)
     serverAppAsFileObserver->handleFileEvent(FileObserverI::FileModified);
 }
 
-TEST_F(ServerAppCreatedTest, whenAfterDataUpdateChangeIsDetectedMsgIsSent)
+TEST_F(ServerAppCreatedTest, whenAfterDataUpdateChangeIsDetectedCorrectMsgIsSent)
 {
     const AccessPoint validAp{"ssidx", 1, 1};
     const auto validParsingResult =
@@ -183,14 +186,27 @@ TEST_F(ServerAppCreatedTest, whenAfterDataUpdateChangeIsDetectedMsgIsSent)
 
     EXPECT_CALL(*m_mockJsonParser, parseFromFile).WillOnce(Return(validParsingResult));
 
-    const APDataChange_t newApChange{NewApChange{validAp}};
+    NewApChange newAp{validAp};
+    const APDataChange_t newApChange{newAp};
     const ChangeList_t changeList{newApChange};
 
     EXPECT_CALL(*m_mockAccessPointData, update(*validParsingResult)).WillOnce(Return(changeList));
 
-    EXPECT_CALL(*m_mockMessagePublisher, sendToSubscribers(StartsWith("New AP"))).Times(1);
+    std::string serializedProtoMsg;
+
+    EXPECT_CALL(*m_mockMessagePublisher, sendToSubscribers(_)).WillOnce(SaveArg<0>(&serializedProtoMsg));
 
     auto* serverAppAsFileObserver = static_cast<FileObserverI*>(&m_serverApp);
 
     serverAppAsFileObserver->handleFileEvent(FileObserverI::FileModified);
+
+    ApWatchI::Msg msg;
+    msg.ParseFromString(serializedProtoMsg);
+
+    EXPECT_TRUE(msg.has_newap());
+
+    const auto& msgNewApDetails = msg.newap().ap();
+    EXPECT_EQ(msgNewApDetails.ssid(), newAp.newAP.SSID);
+    EXPECT_EQ(msgNewApDetails.snr(), newAp.newAP.SNR);
+    EXPECT_EQ(msgNewApDetails.channel(), newAp.newAP.channel);
 }

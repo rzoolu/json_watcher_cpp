@@ -1,6 +1,35 @@
 syntax = "proto3";
 
-message SampleMsg
+package ApWatchI;
+
+message AccessPoint
 {
-    int32 value = 1;
+    string SSID = 1;
+    uint32 SNR = 2;
+    uint32 channel = 3;
+}
+
+message NewAp
+{
+    AccessPoint ap = 1;
+}
+
+message RemovedAp
+{
+    AccessPoint ap = 1;
+}
+
+message ModifiedApParams
+{
+    AccessPoint oldAp = 1;
+    AccessPoint newAp = 2;
+}
+
+message Msg
+{
+    oneof msg {
+        NewAp newAp = 1;
+        RemovedAp removedAp = 2;
+        ModifiedApParams modifiedAp = 3;
+    }
 }

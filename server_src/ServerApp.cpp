@@ -1,5 +1,6 @@
 #include <ServerApp.h>
 
+#include <ChangeToProtoMsgConverter.h>
 #include <JsonParserI.h>
 #include <Log.h>
 #include <MessagePublisherI.h>
@@ -10,27 +11,6 @@
 #include <variant>
 
 constexpr auto APP_TCP_PORT = 8282;
-
-namespace
-{
-struct changeToMessageConverter
-{
-    std::string operator()(const NewApChange& change)
-    {
-        return std::string("New AP: ") + change.newAP.SSID;
-    }
-
-    std::string operator()(const RemovedApChange& change)
-    {
-        return std::string("Removed AP: ") + change.oldAP.SSID;
-    }
-
-    std::string operator()(const ModifiedApParamsChange& change)
-    {
-        return std::string("Changed AP: ") + change.oldAP.SSID;
-    }
-};
-} // namespace
 
 ServerApp::ServerApp(const std::filesystem::path& apFile)
     : m_apFile(apFile),
@@ -81,7 +61,7 @@ void ServerApp::sendChangeMessages(const ChangeList_t& changeList)
 {
     const auto changeToMsg = [](const APDataChange_t& change)
     {
-        return std::visit(changeToMessageConverter{}, change);
+        return std::visit(ChangeToProtoMsgConverter{}, change);
     };
 
     std::vector<std::string> messages;
