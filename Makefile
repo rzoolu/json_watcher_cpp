@@ -21,13 +21,6 @@ PROTOBUF_INSTALL = $(3RDP_DIR)/protobuf/build
 PROTOC = $(PROTOBUF_INSTALL)/bin/protoc
 PROTOBUF_INCLUDE = $(PROTOBUF_INSTALL)/include
 PROTOBUF_ABSEIL_DEPS = \
-  -labsl_str_format_internal       \
-  -labsl_strings                   \
-  -labsl_strings_internal          \
-  -labsl_log_initialize            \
-  -labsl_log_entry                 \
-  -labsl_log_flags                 \
-  -labsl_log_severity              \
   -labsl_log_internal_check_op     \
   -labsl_log_internal_conditions   \
   -labsl_log_internal_message      \
@@ -71,7 +64,9 @@ PROTOBUF_ABSEIL_DEPS = \
   -labsl_spinlock_wait             \
   -labsl_status                    \
   -labsl_statusor                  \
-
+  -labsl_str_format_internal       \
+  -labsl_strings                   \
+  -labsl_strings_internal          \
 
 MSG_IF_PROTO = $(COMMON_DIR)/message_interface/proto
 MSG_IF_GEN_SRC = $(COMMON_DIR)/message_interface/cpp_gen
@@ -80,7 +75,7 @@ IDIRS = -I$(SRC_DIR) -I$(COMMON_DIR) -I$(NLOHMANN_INCLUDE) -I$(CPPZMQ_INCLUDE) -
 CXXFLAGS += $(IDIRS)
 
 LDIRS = -L$(PROTOBUF_INSTALL)/lib
-LIBS = -lzmq -lprotobuf $(PROTOBUF_ABSEIL_DEPS)
+LIBS = -lzmq -lprotobuf-lite $(PROTOBUF_ABSEIL_DEPS)
 LDFLAGS += $(LDIRS) $(LIBS)
 
 BUILD_DIR = build
