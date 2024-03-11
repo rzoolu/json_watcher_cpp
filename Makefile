@@ -1,4 +1,7 @@
+MAKEFLAGS+="-j $(shell nproc)"
+
 CXX = g++ # or run 'make CXX=clang++' for clang
+LD = $(CXX)
 
 ifeq ($(CXX),clang++)
 CXXFLAGS += -stdlib=libc++
@@ -110,11 +113,11 @@ HEADERS = $(wildcard $(SRC_DIR)/*.h) \
 
 SERVER_OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(SRC_DIR)/*.cpp))
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) $(PROTOBUF_SRCS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 server: $(PROTOBUF_OBJS) $(SERVER_OBJS)
-	$(CXX) -o $@ $^ $(CXXLAGS) $(LDFLAGS)
+	$(LD) -o $@ $^ $(LDFLAGS)
 
 xsan_server: CXXLAGS += -fsanitize=address,undefined # -O1 -fno-omit-frame-pointer
 xsan_server: server
