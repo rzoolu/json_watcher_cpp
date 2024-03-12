@@ -86,7 +86,7 @@ IDIRS = -I$(SRC_DIR) -I$(COMMON_DIR) -I$(GTEST_INCLUDE) \
 CXXFLAGS += $(IDIRS)
 
 LDIRS = -L$(GTEST_LIB) -L$(PROTOBUF_INSTALL)/lib
-TEST_LIBS = -lgtest -lgmock -lgtest_main
+TEST_LIBS = -lgtest -lgmock -lgtest
 LIBS = -lzmq -lprotobuf-lite $(PROTOBUF_ABSEIL_DEPS)
 LIBS += $(TEST_LIBS)
 
@@ -140,11 +140,13 @@ tests: $(PROTOBUF_OBJS) $(OBJS)
 valgrind: tests
 		valgrind -q --leak-check=full --show-leak-kinds=all  ./tests
 
-xsan: CXXFLAGS += -fsanitize=address,undefined # -O1 -fno-omit-frame-pointer
-xsan: clean tests
-	./tests && rm -f $(BUILD_DIR)/*.o tests
 
 clean_build:
 	rm -f $(BUILD_DIR)/*.o tests
 
 clean: clean_gen_proto clean_build
+
+xsan: CXXFLAGS += -fsanitize=address,undefined
+xsan: LDFLAGS += -fsanitize=address,undefined
+xsan: tests
+		./tests

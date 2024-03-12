@@ -1,5 +1,6 @@
 
 #include <Log.h>
+#include <ProtoBufGuard.h>
 #include <ServerApp.h>
 
 #include <algorithm>
@@ -86,6 +87,8 @@ Options:
 
 int main(int argc, char* argv[])
 {
+    const ProtoBufGuard pbGuard;
+
     const auto options = createOptionMap(argc, argv);
 
     if (options.contains(OPTION_DEBUG))

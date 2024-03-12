@@ -6,7 +6,7 @@
 #include <memory>
 
 template <typename Product, typename... ArgTypes>
-class MockFactory;
+struct MockFactory;
 
 /* Changes factory std::function into mock, reverts change upon destruction. */
 

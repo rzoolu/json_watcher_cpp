@@ -114,10 +114,11 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) $(PROTOBUF_SRCS)
 server: $(PROTOBUF_OBJS) $(SERVER_OBJS)
 	$(LD) -o $@ $^ $(LDFLAGS)
 
-xsan_server: CXXLAGS += -fsanitize=address,undefined # -O1 -fno-omit-frame-pointer
-xsan_server: server
-
 clean_build:
 	rm -f $(BUILD_DIR)/*.o server
 
 clean: clean_gen_proto clean_build
+
+xsan_server: CXXFLAGS += -fsanitize=address,undefined # -O1 -fno-omit-frame-pointer
+xsan_server: LDFLAGS += -fsanitize=address,undefined
+xsan_server: server
