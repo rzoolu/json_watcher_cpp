@@ -122,3 +122,18 @@ clean: clean_gen_proto clean_build
 xsan_server: CXXFLAGS += -fsanitize=address,undefined # -O1 -fno-omit-frame-pointer
 xsan_server: LDFLAGS += -fsanitize=address,undefined
 xsan_server: server
+
+
+#client
+CLIENT_SRC_DIR=client_src
+
+CLIENT_HEADERS = $(wildcard $(CLIENT_SRC_DIR)/*.h) \
+		  $(wildcard $(COMMON_DIR)/*.h)
+
+CLIENT_OBJS = $(patsubst $(CLIENT_SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(CLIENT_SRC_DIR)/*.cpp))
+
+$(BUILD_DIR)/%.o: $(CLIENT_SRC_DIR)/%.cpp $(HEADERS) #$(PROTOBUF_SRCS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
+
+client: $(CLIENT_OBJS)
+	$(LD) -o $@ $^ $(LDFLAGS)
