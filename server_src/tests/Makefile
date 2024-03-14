@@ -4,8 +4,8 @@ CXX = g++ # or run 'make CXX=clang++' for clang
 LD = $(CXX)
 
 ifeq ($(CXX),clang++)
-CXXFLAGS += -stdlib=libc++
-LDFLAGS += -stdlib=libc++
+CXXFLAGS += -stdlib=libstdc++
+LDFLAGS += -stdlib=libstdc++
 endif
 
 CXXFLAGS += --std=c++20 -Wall -Wextra -ggdb

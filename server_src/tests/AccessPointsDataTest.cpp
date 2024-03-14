@@ -11,9 +11,9 @@ using namespace ::testing;
 namespace
 {
 
-constexpr AccessPoint AP1{"my_ap1", 1, 1};
-constexpr AccessPoint AP2{"my_ap2", 2, 2};
-constexpr AccessPoint AP3{"my_ap3", 3, 3};
+const AccessPoint AP1{"my_ap1", 1, 1};
+const AccessPoint AP2{"my_ap2", 2, 2};
+const AccessPoint AP3{"my_ap3", 3, 3};
 
 const AccessPointMap_t oneItemMap{{AP1.SSID, AP1}};
 const AccessPointMap_t twoItemsMap{{AP1.SSID, AP1},
