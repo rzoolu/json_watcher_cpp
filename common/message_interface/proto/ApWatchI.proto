@@ -22,8 +22,17 @@ message RemovedAp
 
 message ModifiedApParams
 {
+    enum Param
+    {
+        None = 0;
+        SNR = 1;
+        channnel = 2;
+    }
+
     AccessPoint oldAp = 1;
     AccessPoint newAp = 2;
+
+    repeated Param changedParams = 3;
 }
 
 message Msg

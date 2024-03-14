@@ -15,6 +15,7 @@
 #include <filesystem>
 
 using testing::_;
+using testing::Contains;
 using testing::MockFunction;
 using testing::Return;
 using testing::SaveArg;
@@ -221,7 +222,6 @@ TEST_F(ServerAppCreatedTest, whenAfterDataUpdateRemovedApChangeIsDetectedCorrect
 
     const AccessPoint removedAp{"removed", 2, 2};
     RemovedApChange removedApChange{removedAp};
-    // const APDataChange_t removedApChange{removedApChng};
     const ChangeList_t changeList{{removedApChange}};
 
     EXPECT_CALL(*m_mockAccessPointData, update(*validParsingResult)).WillOnce(Return(changeList));
@@ -243,4 +243,53 @@ TEST_F(ServerAppCreatedTest, whenAfterDataUpdateRemovedApChangeIsDetectedCorrect
     EXPECT_EQ(msgRemovedApDetails.ssid(), removedApChange.oldAP.SSID);
     EXPECT_EQ(msgRemovedApDetails.snr(), removedApChange.oldAP.SNR);
     EXPECT_EQ(msgRemovedApDetails.channel(), removedApChange.oldAP.channel);
+}
+
+TEST_F(ServerAppCreatedTest, whenAfterDataUpdateApParamsChangeIsDetectedCorrectMsgIsSent)
+{
+    const AccessPoint validAp{"ssidx", 1, 2};
+    const auto validParsingResult =
+        std::make_optional<AccessPointMap_t>({{validAp.SSID, validAp}});
+
+    EXPECT_CALL(*m_mockJsonParser, parseFromFile).WillOnce(Return(validParsingResult));
+
+    const AccessPoint modifiedAP{"ssidx", 2, 3};
+    ModifiedApParamsChange modifiedApChange{
+        validAp,
+        modifiedAP,
+        {ModifiedApParamsChange::SNR, ModifiedApParamsChange::channnel}};
+
+    const ChangeList_t changeList{{modifiedApChange}};
+
+    EXPECT_CALL(*m_mockAccessPointData, update(*validParsingResult)).WillOnce(Return(changeList));
+
+    std::string serializedProtoMsg;
+
+    EXPECT_CALL(*m_mockMessagePublisher, sendToSubscribers(_)).WillOnce(SaveArg<0>(&serializedProtoMsg));
+
+    auto* serverAppAsFileObserver = static_cast<FileObserverI*>(&m_serverApp);
+
+    serverAppAsFileObserver->handleFileEvent(FileObserverI::FileModified);
+
+    ApWatchI::Msg msg;
+    msg.ParseFromString(serializedProtoMsg);
+
+    EXPECT_TRUE(msg.has_modifiedap());
+
+    const auto& msgOldApValues = msg.modifiedap().oldap();
+    const auto& msgNewApValues = msg.modifiedap().newap();
+
+    EXPECT_EQ(modifiedApChange.oldAP.SSID, msgOldApValues.ssid());
+    EXPECT_EQ(msgOldApValues.ssid(), msgNewApValues.ssid());
+
+    EXPECT_EQ(msgOldApValues.snr(), modifiedApChange.oldAP.SNR);
+    EXPECT_EQ(msgOldApValues.channel(), modifiedApChange.oldAP.channel);
+
+    EXPECT_EQ(msgNewApValues.snr(), modifiedApChange.newAP.SNR);
+    EXPECT_EQ(msgNewApValues.channel(), modifiedApChange.newAP.channel);
+
+    EXPECT_EQ(msg.modifiedap().changedparams_size(), (int)modifiedApChange.changedParams.size());
+
+    EXPECT_THAT(msg.modifiedap().changedparams(), Contains(ApWatchI::ModifiedApParams::SNR));
+    EXPECT_THAT(msg.modifiedap().changedparams(), Contains(ApWatchI::ModifiedApParams::channnel));
 }
