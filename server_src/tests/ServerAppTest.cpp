@@ -178,7 +178,7 @@ TEST_F(ServerAppCreatedTest, whenNewJsonContentIsValidApDataIsUpdatedWithIt)
     serverAppAsFileObserver->handleFileEvent(FileObserverI::FileModified);
 }
 
-TEST_F(ServerAppCreatedTest, whenAfterDataUpdateChangeIsDetectedCorrectMsgIsSent)
+TEST_F(ServerAppCreatedTest, whenAfterDataUpdateNewApChangeIsDetectedCorrectMsgIsSent)
 {
     const AccessPoint validAp{"ssidx", 1, 1};
     const auto validParsingResult =
@@ -209,4 +209,38 @@ TEST_F(ServerAppCreatedTest, whenAfterDataUpdateChangeIsDetectedCorrectMsgIsSent
     EXPECT_EQ(msgNewApDetails.ssid(), newAp.newAP.SSID);
     EXPECT_EQ(msgNewApDetails.snr(), newAp.newAP.SNR);
     EXPECT_EQ(msgNewApDetails.channel(), newAp.newAP.channel);
+}
+
+TEST_F(ServerAppCreatedTest, whenAfterDataUpdateRemovedApChangeIsDetectedCorrectMsgIsSent)
+{
+    const AccessPoint validAp{"ssidx", 1, 1};
+    const auto validParsingResult =
+        std::make_optional<AccessPointMap_t>({{validAp.SSID, validAp}});
+
+    EXPECT_CALL(*m_mockJsonParser, parseFromFile).WillOnce(Return(validParsingResult));
+
+    const AccessPoint removedAp{"removed", 2, 2};
+    RemovedApChange removedApChange{removedAp};
+    // const APDataChange_t removedApChange{removedApChng};
+    const ChangeList_t changeList{{removedApChange}};
+
+    EXPECT_CALL(*m_mockAccessPointData, update(*validParsingResult)).WillOnce(Return(changeList));
+
+    std::string serializedProtoMsg;
+
+    EXPECT_CALL(*m_mockMessagePublisher, sendToSubscribers(_)).WillOnce(SaveArg<0>(&serializedProtoMsg));
+
+    auto* serverAppAsFileObserver = static_cast<FileObserverI*>(&m_serverApp);
+
+    serverAppAsFileObserver->handleFileEvent(FileObserverI::FileModified);
+
+    ApWatchI::Msg msg;
+    msg.ParseFromString(serializedProtoMsg);
+
+    EXPECT_TRUE(msg.has_removedap());
+
+    const auto& msgRemovedApDetails = msg.removedap().ap();
+    EXPECT_EQ(msgRemovedApDetails.ssid(), removedApChange.oldAP.SSID);
+    EXPECT_EQ(msgRemovedApDetails.snr(), removedApChange.oldAP.SNR);
+    EXPECT_EQ(msgRemovedApDetails.channel(), removedApChange.oldAP.channel);
 }
