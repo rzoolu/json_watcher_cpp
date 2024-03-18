@@ -102,6 +102,13 @@ $(BUILD_DIR)/%.pb.o: $(MSG_IF_GEN_SRC)/%.pb.cc
 
 gen_proto_objs: $(PROTOBUF_OBJS)
 
+
+# common
+COMMON_OBJS = $(patsubst $(COMMON_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(COMMON_DIR)/*.cpp))
+
+$(BUILD_DIR)/%.o: $(COMMON_DIR)/%.cpp
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
+
 # server
 HEADERS = $(wildcard $(SRC_DIR)/*.h) \
 		  $(wildcard $(COMMON_DIR)/*.h)
@@ -111,7 +118,7 @@ SERVER_OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(SRC_DI
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) $(PROTOBUF_SRCS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
-server: $(PROTOBUF_OBJS) $(SERVER_OBJS)
+server: $(PROTOBUF_OBJS) $(SERVER_OBJS) $(COMMON_OBJS)
 	$(LD) -o $@ $^ $(LDFLAGS)
 
 clean_build:
@@ -135,5 +142,5 @@ CLIENT_OBJS = $(patsubst $(CLIENT_SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $
 $(BUILD_DIR)/%.o: $(CLIENT_SRC_DIR)/%.cpp $(HEADERS) #$(PROTOBUF_SRCS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
-client: $(CLIENT_OBJS)
+client: $(CLIENT_OBJS) $(COMMON_OBJS)
 	$(LD) -o $@ $^ $(LDFLAGS)
