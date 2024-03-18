@@ -2,7 +2,7 @@
 #include "ClientApp.h"
 
 #include <Log.h>
-// #include <ProtoBufGuard.h>
+#include <ProtoBufGuard.h>
 
 #include <algorithm>
 #include <array>
@@ -55,7 +55,7 @@ OptionValMap createOptionMap(const int argc, char* argv[])
 
 int main(const int argc, char* argv[])
 {
-    // const ProtoBufGuard pbGuard;
+    const ProtoBufGuard pbGuard;
 
     const auto options = createOptionMap(argc, argv);
 
