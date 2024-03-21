@@ -12,7 +12,7 @@ public:
     MessagePublisher(std::uint16_t tcpPort);
     ~MessagePublisher() override = default;
 
-    void sendToSubscribers(const std::string& msg) override;
+    void sendToSubscribers(const msg::MsgDescriptor& msg) override;
 
 private:
     zmq::context_t m_zmqContext;

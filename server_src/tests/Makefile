@@ -120,7 +120,8 @@ gen_proto_objs: $(PROTOBUF_OBJS)
 # tests
 HEADERS = $(wildcard $(SRC_DIR)/*.h) $(wildcard $(COMMON_DIR)/*.h)
 
-OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(SRC_DIR)/*.cpp))
+OBJS =  $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(SRC_DIR)/*.cpp))
+OBJS += $(patsubst $(COMMON_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(COMMON_DIR)/*.cpp))
 OBJS += $(patsubst $(TEST_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(wildcard $(TEST_DIR)/*.cpp))
 
 # remove real main to use test main
@@ -131,6 +132,9 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) $(PROTOBUF_SRCS)
 		$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 $(BUILD_DIR)/%.o: $(TEST_DIR)/%.cpp $(HEADERS) $(PROTOBUF_SRCS)
+		$(CXX) -c -o $@ $< $(CXXFLAGS)
+
+$(BUILD_DIR)/%.o: $(COMMON_DIR)/%.cpp $(HEADERS) $(PROTOBUF_SRCS)
 		$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 

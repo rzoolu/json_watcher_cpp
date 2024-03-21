@@ -11,49 +11,49 @@ void toProtoBufType(const AccessPoint& changeAp, ApWatchI::AccessPoint* protoAp)
     protoAp->set_channel(changeAp.channel);
 }
 
-ApWatchI::ModifiedApParams::Param toProtoBufType(ModifiedApParamsChange::Param param)
+ApWatchI::ModifiedApParamsMsg::Param toProtoBufType(ModifiedApParamsChange::Param param)
 {
     switch (param)
     {
     case ModifiedApParamsChange::SNR:
-        return ApWatchI::ModifiedApParams::SNR;
+        return ApWatchI::ModifiedApParamsMsg::SNR;
     case ModifiedApParamsChange::channnel:
-        return ApWatchI::ModifiedApParams::channnel;
+        return ApWatchI::ModifiedApParamsMsg::channnel;
     default:
-        return ApWatchI::ModifiedApParams::None;
+        return ApWatchI::ModifiedApParamsMsg::None;
     }
 }
 } // namespace
 
-std::string ChangeToProtoMsgConverter::operator()(const NewApChange& change)
+msg::MsgDescriptor ChangeToProtoMsgConverter::operator()(const NewApChange& change)
 {
-    ApWatchI::Msg msg;
+    ApWatchI::NewApMsg msg;
 
-    toProtoBufType(change.newAP, msg.mutable_newap()->mutable_ap());
+    toProtoBufType(change.newAP, msg.mutable_ap());
 
-    return msg.SerializeAsString();
+    return msg::createMsgDescriptor(msg::IfaceId::ApWatchI, ApWatchI::NewAp, msg);
 }
 
-std::string ChangeToProtoMsgConverter::operator()(const RemovedApChange& change)
+msg::MsgDescriptor ChangeToProtoMsgConverter::operator()(const RemovedApChange& change)
 {
-    ApWatchI::Msg msg;
+    ApWatchI::RemovedApMsg msg;
 
-    toProtoBufType(change.oldAP, msg.mutable_removedap()->mutable_ap());
+    toProtoBufType(change.oldAP, msg.mutable_ap());
 
-    return msg.SerializeAsString();
+    return msg::createMsgDescriptor(msg::IfaceId::ApWatchI, ApWatchI::RemovedAp, msg);
 }
 
-std::string ChangeToProtoMsgConverter::operator()(const ModifiedApParamsChange& change)
+msg::MsgDescriptor ChangeToProtoMsgConverter::operator()(const ModifiedApParamsChange& change)
 {
-    ApWatchI::Msg msg;
+    ApWatchI::ModifiedApParamsMsg msg;
 
-    toProtoBufType(change.oldAP, msg.mutable_modifiedap()->mutable_oldap());
-    toProtoBufType(change.newAP, msg.mutable_modifiedap()->mutable_newap());
+    toProtoBufType(change.oldAP, msg.mutable_oldap());
+    toProtoBufType(change.newAP, msg.mutable_newap());
 
     for (const auto param : change.changedParams)
     {
-        msg.mutable_modifiedap()->add_changedparams(toProtoBufType(param));
+        msg.add_changedparams(toProtoBufType(param));
     }
 
-    return msg.SerializeAsString();
+    return msg::createMsgDescriptor(msg::IfaceId::ApWatchI, ApWatchI::ModifiedApParams, msg);
 }

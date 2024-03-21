@@ -1,4 +1,5 @@
 #include <MessagePublisherI.h>
+#include <Messaging.h>
 
 #include <gtest/gtest.h>
 #include <zmq.hpp>
@@ -10,7 +11,7 @@ namespace
 {
 constexpr std::uint16_t UT_TCP_PORT = 8181;
 
-std::string subscribeAndRecieve()
+msg::MsgDescriptor subscribeAndRecieve()
 {
     zmq::context_t context;
     zmq::socket_t subscriber(context, zmq::socket_type::sub);
@@ -22,14 +23,13 @@ std::string subscribeAndRecieve()
     // prevent infinite waiting, if test thread was faster
     subscriber.set(zmq::sockopt::rcvtimeo, 1000);
 
-    zmq::message_t receivedMsg;
-    const auto recvRes = subscriber.recv(receivedMsg);
+    msg::MsgDescriptor msg;
+    auto recvRes = msg::receiveMsg(subscriber, msg);
 
     assert(recvRes.has_value() && "No message to receive, perhaps waiting timer in test should be increased.");
 
-    return receivedMsg.to_string();
+    return msg;
 }
-
 } // namespace
 
 TEST(MessagePublisher, createAndDelete)
@@ -43,15 +43,24 @@ TEST(MessagePublisher, sendMessage)
 {
     auto publisher = MessagePublisherI::create(UT_TCP_PORT);
 
-    auto subThreadRes = std::async(std::launch::async, subscribeAndRecieve);
+    auto subThreadRes =
+        std::async(std::launch::async, subscribeAndRecieve);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
-    const std::string sentMsg("MESSAGE_BODY");
+    enum DummMsgId
+    {
+        msgXId = 42
+    };
+
+    const auto msgHeader =
+        msg::createMessageHeader(msg::IfaceId::ApWatchI, msgXId);
+
+    const std::string msgBody("MESSAGE_BODY");
+    const msg::MsgDescriptor sentMsg{msgHeader, msgBody};
 
     publisher->sendToSubscribers(sentMsg);
 
     const auto receivedMsg = subThreadRes.get();
-
     ASSERT_EQ(receivedMsg, sentMsg);
 }

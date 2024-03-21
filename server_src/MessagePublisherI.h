@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Messaging.h>
+
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -12,7 +14,7 @@ public:
 
     static MessagePublisherFactory_t create;
 
-    virtual void sendToSubscribers(const std::string& msg) = 0;
+    virtual void sendToSubscribers(const msg::MsgDescriptor& msg) = 0;
 
     virtual ~MessagePublisherI() = default;
 };

@@ -4,6 +4,7 @@
 #include <JsonParserI.h>
 #include <Log.h>
 #include <MessagePublisherI.h>
+#include <Messaging.h>
 
 #include <algorithm>
 #include <cassert>
@@ -64,7 +65,7 @@ void ServerApp::sendChangeMessages(const ChangeList_t& changeList)
         return std::visit(ChangeToProtoMsgConverter{}, change);
     };
 
-    std::vector<std::string> messages;
+    std::vector<msg::MsgDescriptor> messages;
 
     std::transform(changeList.begin(), changeList.end(),
                    std::back_inserter(messages), changeToMsg);

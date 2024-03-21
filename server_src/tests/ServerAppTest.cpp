@@ -193,20 +193,23 @@ TEST_F(ServerAppCreatedTest, whenAfterDataUpdateNewApChangeIsDetectedCorrectMsgI
 
     EXPECT_CALL(*m_mockAccessPointData, update(*validParsingResult)).WillOnce(Return(changeList));
 
-    std::string serializedProtoMsg;
+    msg::MsgDescriptor msgDesc;
 
-    EXPECT_CALL(*m_mockMessagePublisher, sendToSubscribers(_)).WillOnce(SaveArg<0>(&serializedProtoMsg));
+    EXPECT_CALL(*m_mockMessagePublisher, sendToSubscribers(_)).WillOnce(SaveArg<0>(&msgDesc));
 
     auto* serverAppAsFileObserver = static_cast<FileObserverI*>(&m_serverApp);
 
     serverAppAsFileObserver->handleFileEvent(FileObserverI::FileModified);
 
-    ApWatchI::Msg msg;
-    msg.ParseFromString(serializedProtoMsg);
+    const auto expectedMsgHeader =
+        msg::createMessageHeader(msg::IfaceId::ApWatchI, ApWatchI::NewAp);
 
-    EXPECT_TRUE(msg.has_newap());
+    ASSERT_EQ(msgDesc.header, expectedMsgHeader);
 
-    const auto& msgNewApDetails = msg.newap().ap();
+    ApWatchI::NewApMsg newApMsg;
+    EXPECT_TRUE(newApMsg.ParseFromString(msgDesc.body));
+
+    const auto& msgNewApDetails = newApMsg.ap();
     EXPECT_EQ(msgNewApDetails.ssid(), newAp.newAP.SSID);
     EXPECT_EQ(msgNewApDetails.snr(), newAp.newAP.SNR);
     EXPECT_EQ(msgNewApDetails.channel(), newAp.newAP.channel);
@@ -226,20 +229,23 @@ TEST_F(ServerAppCreatedTest, whenAfterDataUpdateRemovedApChangeIsDetectedCorrect
 
     EXPECT_CALL(*m_mockAccessPointData, update(*validParsingResult)).WillOnce(Return(changeList));
 
-    std::string serializedProtoMsg;
+    msg::MsgDescriptor msgDesc;
 
-    EXPECT_CALL(*m_mockMessagePublisher, sendToSubscribers(_)).WillOnce(SaveArg<0>(&serializedProtoMsg));
+    EXPECT_CALL(*m_mockMessagePublisher, sendToSubscribers(_)).WillOnce(SaveArg<0>(&msgDesc));
 
     auto* serverAppAsFileObserver = static_cast<FileObserverI*>(&m_serverApp);
 
     serverAppAsFileObserver->handleFileEvent(FileObserverI::FileModified);
 
-    ApWatchI::Msg msg;
-    msg.ParseFromString(serializedProtoMsg);
+    const auto expectedMsgHeader =
+        msg::createMessageHeader(msg::IfaceId::ApWatchI, ApWatchI::RemovedAp);
 
-    EXPECT_TRUE(msg.has_removedap());
+    ASSERT_EQ(msgDesc.header, expectedMsgHeader);
 
-    const auto& msgRemovedApDetails = msg.removedap().ap();
+    ApWatchI::RemovedApMsg removedApMsg;
+    EXPECT_TRUE(removedApMsg.ParseFromString(msgDesc.body));
+
+    const auto& msgRemovedApDetails = removedApMsg.ap();
     EXPECT_EQ(msgRemovedApDetails.ssid(), removedApChange.oldAP.SSID);
     EXPECT_EQ(msgRemovedApDetails.snr(), removedApChange.oldAP.SNR);
     EXPECT_EQ(msgRemovedApDetails.channel(), removedApChange.oldAP.channel);
@@ -253,7 +259,10 @@ TEST_F(ServerAppCreatedTest, whenAfterDataUpdateApParamsChangeIsDetectedCorrectM
 
     EXPECT_CALL(*m_mockJsonParser, parseFromFile).WillOnce(Return(validParsingResult));
 
-    const AccessPoint modifiedAP{"ssidx", 2, 3};
+    AccessPoint modifiedAP{validAp};
+    modifiedAP.SNR++;
+    modifiedAP.channel++;
+
     ModifiedApParamsChange modifiedApChange{
         validAp,
         modifiedAP,
@@ -263,33 +272,35 @@ TEST_F(ServerAppCreatedTest, whenAfterDataUpdateApParamsChangeIsDetectedCorrectM
 
     EXPECT_CALL(*m_mockAccessPointData, update(*validParsingResult)).WillOnce(Return(changeList));
 
-    std::string serializedProtoMsg;
+    msg::MsgDescriptor msgDesc;
 
-    EXPECT_CALL(*m_mockMessagePublisher, sendToSubscribers(_)).WillOnce(SaveArg<0>(&serializedProtoMsg));
+    EXPECT_CALL(*m_mockMessagePublisher, sendToSubscribers(_)).WillOnce(SaveArg<0>(&msgDesc));
 
     auto* serverAppAsFileObserver = static_cast<FileObserverI*>(&m_serverApp);
 
     serverAppAsFileObserver->handleFileEvent(FileObserverI::FileModified);
 
-    ApWatchI::Msg msg;
-    msg.ParseFromString(serializedProtoMsg);
+    const auto expectedMsgHeader =
+        msg::createMessageHeader(msg::IfaceId::ApWatchI, ApWatchI::ModifiedApParams);
 
-    EXPECT_TRUE(msg.has_modifiedap());
+    ASSERT_EQ(msgDesc.header, expectedMsgHeader);
 
-    const auto& msgOldApValues = msg.modifiedap().oldap();
-    const auto& msgNewApValues = msg.modifiedap().newap();
+    ApWatchI::ModifiedApParamsMsg modifiedApMsg;
+    EXPECT_TRUE(modifiedApMsg.ParseFromString(msgDesc.body));
 
-    EXPECT_EQ(modifiedApChange.oldAP.SSID, msgOldApValues.ssid());
-    EXPECT_EQ(msgOldApValues.ssid(), msgNewApValues.ssid());
+    const auto& msgOldApValues = modifiedApMsg.oldap();
+    const auto& msgNewApValues = modifiedApMsg.newap();
 
+    EXPECT_EQ(msgOldApValues.ssid(), modifiedApChange.oldAP.SSID);
     EXPECT_EQ(msgOldApValues.snr(), modifiedApChange.oldAP.SNR);
     EXPECT_EQ(msgOldApValues.channel(), modifiedApChange.oldAP.channel);
 
+    EXPECT_EQ(msgNewApValues.ssid(), modifiedApChange.newAP.SSID);
     EXPECT_EQ(msgNewApValues.snr(), modifiedApChange.newAP.SNR);
     EXPECT_EQ(msgNewApValues.channel(), modifiedApChange.newAP.channel);
 
-    EXPECT_EQ(msg.modifiedap().changedparams_size(), (int)modifiedApChange.changedParams.size());
+    EXPECT_EQ(modifiedApMsg.changedparams_size(), (int)modifiedApChange.changedParams.size());
 
-    EXPECT_THAT(msg.modifiedap().changedparams(), Contains(ApWatchI::ModifiedApParams::SNR));
-    EXPECT_THAT(msg.modifiedap().changedparams(), Contains(ApWatchI::ModifiedApParams::channnel));
+    EXPECT_THAT(modifiedApMsg.changedparams(), Contains(ApWatchI::ModifiedApParamsMsg::SNR));
+    EXPECT_THAT(modifiedApMsg.changedparams(), Contains(ApWatchI::ModifiedApParamsMsg::channnel));
 }

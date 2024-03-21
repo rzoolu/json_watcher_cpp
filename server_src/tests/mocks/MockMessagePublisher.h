@@ -7,5 +7,5 @@
 class MockMessagePublisher : public MessagePublisherI
 {
 public:
-    MOCK_METHOD(void, sendToSubscribers, (const std::string&), (override));
+    MOCK_METHOD(void, sendToSubscribers, (const msg::MsgDescriptor&), (override));
 };
