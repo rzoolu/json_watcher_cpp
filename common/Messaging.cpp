@@ -1,6 +1,7 @@
 #include "Messaging.h"
 
 #include <arpa/inet.h>
+#include <cstring>
 
 namespace msg
 {
@@ -37,6 +38,9 @@ zmq::send_result_t sendMsg(zmq::socket_t& socket, const MsgDescriptor& msg)
 
 zmq::recv_result_t receiveMsg(zmq::socket_t& socket, MsgDescriptor& msg)
 {
+    static_assert(sizeof(msg.header.ifaceId) == sizeof(std::uint32_t));
+    static_assert(sizeof(msg.header.msgId) == sizeof(std::uint32_t));
+
     constexpr auto numOfHeaderFields = 2;
     constexpr auto expectedHeaderSize = numOfHeaderFields * sizeof(std::uint32_t);
 
@@ -47,14 +51,14 @@ zmq::recv_result_t receiveMsg(zmq::socket_t& socket, MsgDescriptor& msg)
         return {};
     }
 
-    static_assert(sizeof(msg.header.ifaceId) == sizeof(std::uint32_t));
+    std::uint32_t netOrderHeader[numOfHeaderFields];
+    static_assert(expectedHeaderSize == sizeof(netOrderHeader));
 
-    const auto* msgHeaderData =
-        static_cast<std::uint32_t*>(msgHeader.data());
+    std::memcpy(&netOrderHeader, msgHeader.data(), sizeof(netOrderHeader));
 
     msg.header.ifaceId =
-        static_cast<decltype(msg.header.ifaceId)>(ntohl(msgHeaderData[0]));
-    msg.header.msgId = ntohl(msgHeaderData[1]);
+        static_cast<decltype(msg.header.ifaceId)>(ntohl(netOrderHeader[0]));
+    msg.header.msgId = ntohl(netOrderHeader[1]);
 
     zmq::message_t msgBody;
     recvRes = socket.recv(msgBody);
