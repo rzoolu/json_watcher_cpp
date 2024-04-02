@@ -3,6 +3,7 @@
 
 #include <ApWatchI.pb.h>
 #include <Log.h>
+#include <Messaging.h>
 
 MessageSubscriberI::MessageSubscriberFactory_t MessageSubscriberI::create = [](Host host, TcpPort port)
 {
@@ -32,34 +33,53 @@ void MessageSubscriber::startReceiving()
 
     while (1)
     {
-        zmq::message_t msg;
-        const auto ret = m_zmqSocket.recv(msg);
 
-        if (!ret)
+        msg::MsgDescriptor receivedMsg;
+        auto res = msg::receiveMsg(m_zmqSocket, receivedMsg);
+
+        if (!res)
         {
             LOG(ERROR, "ZMQ socket recive error.");
         }
 
-        LOG(DEBUG, "ZMQ socket got message, size is: {}", *ret);
+        LOG(DEBUG, "ZMQ socket got message, size is: {}", *res);
 
-        ApWatchI::Msg apWatchMsg;
-        apWatchMsg.ParseFromString(msg.to_string_view());
-
-        switch (apWatchMsg.msg_case())
+        if (receivedMsg.header.ifaceId == msg::IfaceId::ApWatchI)
         {
-        case ApWatchI::Msg::kNewAp:
-            LOG(DEBUG, "kNewAp message, ssid is: {}", apWatchMsg.newap().ap().ssid());
+            switch (receivedMsg.header.msgId)
+            {
+            case ApWatchI::NewAp:
+            {
+                ApWatchI::NewApMsg newApMsg;
+                newApMsg.ParseFromString(receivedMsg.body);
 
+                LOG(DEBUG, "NewAp message, ssid is: {}", newApMsg.ap().ssid());
+            }
             break;
-        case ApWatchI::Msg::kRemovedAp:
-            LOG(DEBUG, "kRemovedAp message, ssid is: {}", apWatchMsg.removedap().ap().ssid());
 
+            case ApWatchI::RemovedAp:
+            {
+                ApWatchI::RemovedApMsg removedApMsg;
+                removedApMsg.ParseFromString(receivedMsg.body);
+
+                LOG(DEBUG, "RemovedAp message, ssid is: {}", removedApMsg.ap().ssid());
+            }
             break;
-        case ApWatchI::Msg::kModifiedAp:
-            LOG(DEBUG, "kModifiedAp message, ssid is: {}", apWatchMsg.modifiedap().oldap().ssid());
+
+            case ApWatchI::ModifiedApParams:
+            {
+                ApWatchI::ModifiedApParamsMsg modifiedApMsg;
+                modifiedApMsg.ParseFromString(receivedMsg.body);
+
+                LOG(DEBUG, "ModifiedApParams message, ssid is: {}", modifiedApMsg.oldap().ssid());
+            }
             break;
-        default:
-            break;
+
+            default:
+                LOG(DEBUG, "Unintresting message: iface={}, msgId={}",
+                    msg::toStr(receivedMsg.header.ifaceId), receivedMsg.header.msgId);
+                break;
+            }
         }
     }
 }
