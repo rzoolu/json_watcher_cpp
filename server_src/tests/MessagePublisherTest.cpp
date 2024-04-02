@@ -23,12 +23,11 @@ msg::MsgDescriptor subscribeAndRecieve()
     // prevent infinite waiting, if test thread was faster
     subscriber.set(zmq::sockopt::rcvtimeo, 1000);
 
-    msg::MsgDescriptor msg;
-    auto recvRes = msg::receiveMsg(subscriber, msg);
+    auto recvMsg = msg::receiveMsg(subscriber);
 
-    assert(recvRes.has_value() && "No message to receive, perhaps waiting timer in test should be increased.");
+    assert(recvMsg && "No message to receive, perhaps waiting timer in test should be increased.");
 
-    return msg;
+    return recvMsg;
 }
 } // namespace
 

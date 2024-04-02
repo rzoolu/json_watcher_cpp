@@ -6,6 +6,11 @@
 namespace msg
 {
 
+MsgDescriptor::operator bool() const
+{
+    return isMsgDescriptorValid(*this);
+}
+
 zmq::send_result_t sendMsg(zmq::socket_t& socket, const MsgDescriptor& msg)
 {
     constexpr auto numOfHeaderFields = 2;
@@ -36,10 +41,8 @@ zmq::send_result_t sendMsg(zmq::socket_t& socket, const MsgDescriptor& msg)
     return zmq::send_result_t{bytesSent};
 }
 
-zmq::recv_result_t receiveMsg(zmq::socket_t& socket, MsgDescriptor& msg)
+MsgDescriptor receiveMsg(zmq::socket_t& socket)
 {
-    static_assert(sizeof(msg.header.ifaceId) == sizeof(std::uint32_t));
-    static_assert(sizeof(msg.header.msgId) == sizeof(std::uint32_t));
 
     constexpr auto numOfHeaderFields = 2;
     constexpr auto expectedHeaderSize = numOfHeaderFields * sizeof(std::uint32_t);
@@ -56,22 +59,25 @@ zmq::recv_result_t receiveMsg(zmq::socket_t& socket, MsgDescriptor& msg)
 
     std::memcpy(&netOrderHeader, msgHeader.data(), sizeof(netOrderHeader));
 
-    msg.header.ifaceId =
-        static_cast<decltype(msg.header.ifaceId)>(ntohl(netOrderHeader[0]));
-    msg.header.msgId = ntohl(netOrderHeader[1]);
+    MsgDescriptor msgDesc;
+    static_assert(sizeof(msgDesc.header.ifaceId) == sizeof(std::uint32_t));
+    static_assert(sizeof(msgDesc.header.msgId) == sizeof(std::uint32_t));
+
+    msgDesc.header.ifaceId =
+        static_cast<decltype(msgDesc.header.ifaceId)>(ntohl(netOrderHeader[0]));
+    msgDesc.header.msgId = ntohl(netOrderHeader[1]);
 
     zmq::message_t msgBody;
     recvRes = socket.recv(msgBody);
 
     if (!recvRes)
     {
-        return recvRes;
+        // treat no body, as failure case, peraphs this can be changed.
+        return {};
     }
 
-    msg.body = msgBody.to_string();
-
-    // total bytes received
-    return zmq::recv_result_t{expectedHeaderSize + *recvRes};
+    msgDesc.body = msgBody.to_string();
+    return msgDesc;
 }
 
 } // namespace msg

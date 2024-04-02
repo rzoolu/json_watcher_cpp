@@ -33,16 +33,15 @@ void MessageSubscriber::startReceiving()
 
     while (1)
     {
+        auto receivedMsg = msg::receiveMsg(m_zmqSocket);
 
-        msg::MsgDescriptor receivedMsg;
-        auto res = msg::receiveMsg(m_zmqSocket, receivedMsg);
-
-        if (!res)
+        if (!receivedMsg)
         {
-            LOG(ERROR, "ZMQ socket recive error.");
+            LOG(ERROR, "Socket recive error.");
         }
 
-        LOG(DEBUG, "ZMQ socket got message, size is: {}", *res);
+        LOG(DEBUG, "ZMQ socket got message, iface={}, msgId={}",
+            msg::toStr(receivedMsg.header.ifaceId), receivedMsg.header.msgId);
 
         if (receivedMsg.header.ifaceId == msg::IfaceId::ApWatchI)
         {

@@ -20,13 +20,26 @@ struct MsgHeader
     bool operator==(const MsgHeader&) const = default;
 };
 
+constexpr bool isHeaderValid(const MsgHeader& header)
+{
+    return header.ifaceId != IfaceId::UNUSED &&
+           header.msgId != MSG_ID_UNUSED;
+}
+
 struct MsgDescriptor
 {
     MsgHeader header;
     std::string body;
 
     bool operator==(const MsgDescriptor&) const = default;
+
+    explicit operator bool() const;
 };
+
+constexpr bool isMsgDescriptorValid(const MsgDescriptor& msg)
+{
+    return isHeaderValid(msg.header);
+}
 
 template <typename MsgId>
 constexpr MsgHeader createMessageHeader(IfaceId iface, MsgId msg)
@@ -45,12 +58,6 @@ constexpr MsgHeader createMessageHeader(IfaceId iface, MsgId msg)
     {
         return MsgHeader{};
     }
-}
-
-constexpr bool isHeaderValid(const MsgHeader& header)
-{
-    return header.ifaceId != IfaceId::UNUSED &&
-           header.msgId != MSG_ID_UNUSED;
 }
 
 template <typename MsgId>
@@ -72,6 +79,6 @@ MsgDescriptor createMsgDescriptor(IfaceId ifaceId,
 }
 
 zmq::send_result_t sendMsg(zmq::socket_t& socket, const MsgDescriptor& msg);
-zmq::recv_result_t receiveMsg(zmq::socket_t& socket, MsgDescriptor& msg);
+MsgDescriptor receiveMsg(zmq::socket_t& socket);
 
 } // namespace msg
