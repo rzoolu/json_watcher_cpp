@@ -16,10 +16,9 @@ cd 3rdp/googletest
 mkdir build
 cd build
 cmake .. -DCMAKE_CXX_STANDARD=20
-make
+make -j4
 
 Use binaries and headers from 3rdp/googletest/build.
 
-3) json: headers only usage
-4) cppzmq: headers only usage
-
+3) cppzmq: header only library embedded to main CMake project with add_subdirectory()
+4) json: headers only library embedded to main CMake project with add_subdirectory()
