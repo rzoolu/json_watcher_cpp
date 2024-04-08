@@ -86,7 +86,7 @@ TEST_F(JsonParserTest, InvalidJson)
 
 TEST_F(JsonParserTest, parseFromValidFile)
 {
-    constexpr auto* sampleFilePath = "../../sample_data/access_points.json";
+    constexpr auto* sampleFilePath = "./access_points.json";
 
     auto apMap = m_jsonParser->parseFromFile(sampleFilePath);
     ASSERT_TRUE(apMap.has_value());

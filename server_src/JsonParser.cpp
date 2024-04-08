@@ -42,6 +42,12 @@ std::optional<AccessPointMap_t> JsonParser::parseFromFile(const std::filesystem:
 {
     std::ifstream input(file);
 
+    if (!input.good())
+    {
+        LOG(ERROR, "File: {} cannot be read.", file.string());
+        return std::nullopt;
+    }
+
     LOG(DEBUG, "JSON parsing file: {}.", file.string());
 
     return parseFromStream(input);
