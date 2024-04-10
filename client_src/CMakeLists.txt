@@ -1,6 +1,7 @@
 
 add_executable(clientApp)
 target_sources(clientApp PRIVATE
+    "ApWatchIMsgHandler.cpp"
     "ClientApp.cpp"
     "ClientMain.cpp"
     "MessageSubscriber.cpp"
