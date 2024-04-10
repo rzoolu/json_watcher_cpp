@@ -11,4 +11,5 @@ target_include_directories(clientApp PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 
 target_link_libraries(clientApp PRIVATE common_compile_options)
 
-target_link_libraries(clientApp PRIVATE common_obj_lib)
+target_link_libraries(clientApp PRIVATE common_log_interface_lib)
+target_link_libraries(clientApp PRIVATE common_msg_obj_lib)

@@ -49,5 +49,6 @@ target_link_libraries(serverApp_tests PRIVATE GTest::gtest)
 target_link_libraries(serverApp_tests PRIVATE GTest::gmock)
 
 target_link_libraries(serverApp_tests PRIVATE common_compile_options)
-target_link_libraries(serverApp_tests PRIVATE common_obj_lib)
+target_link_libraries(serverApp_tests PRIVATE common_log_interface_lib)
+target_link_libraries(serverApp_tests PRIVATE common_msg_obj_lib)
 target_link_libraries(serverApp_tests PRIVATE nlohmann_json::nlohmann_json)
