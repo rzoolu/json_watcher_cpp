@@ -1,8 +1,8 @@
-#include <AccessPointsDataI.h>
 #include <JsonParserI.h>
 
-#include <gtest/gtest.h>
+#include <AccessPointsDataI.h>
 
+#include <gtest/gtest.h>
 #include <memory>
 
 class JsonParserTest : public testing::Test

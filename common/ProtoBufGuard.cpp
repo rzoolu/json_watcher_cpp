@@ -1,5 +1,5 @@
 
-#include <ProtoBufGuard.h>
+#include "ProtoBufGuard.h"
 
 #include <google/protobuf/stubs/common.h>
 

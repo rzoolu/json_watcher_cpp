@@ -1,10 +1,9 @@
 #pragma once
 
-#include <MessagePublisherI.h>
-
-#include <zmq.hpp>
+#include "MessagePublisherI.h"
 
 #include <cstdint>
+#include <zmq.hpp>
 
 class MessagePublisher : public MessagePublisherI
 {

@@ -1,9 +1,9 @@
-#include <FileMonitor.h>
+#include "FileMonitor.h"
+
 #include <Log.h>
 
-#include <exception>
-
 #include <cstddef>
+#include <exception>
 #include <sys/inotify.h>
 #include <unistd.h>
 

@@ -1,7 +1,8 @@
 
+#include "ServerApp.h"
+
 #include <Log.h>
 #include <ProtoBufGuard.h>
-#include <ServerApp.h>
 
 #include <algorithm>
 #include <array>

@@ -1,11 +1,11 @@
 #include <MessagePublisherI.h>
+
 #include <Messaging.h>
 
-#include <gtest/gtest.h>
-#include <zmq.hpp>
-
 #include <future>
+#include <gtest/gtest.h>
 #include <iostream>
+#include <zmq.hpp>
 
 namespace
 {

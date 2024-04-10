@@ -2,13 +2,11 @@
 
 #include "mocks/MockFileObserver.h"
 
+#include <fcntl.h>
+#include <filesystem>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-
-#include <filesystem>
 #include <thread>
-
-#include <fcntl.h>
 #include <unistd.h>
 
 namespace

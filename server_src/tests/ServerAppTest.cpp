@@ -9,10 +9,9 @@
 #include "mocks/MockJsonParser.h"
 #include "mocks/MockMessagePublisher.h"
 
+#include <filesystem>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-
-#include <filesystem>
 
 using testing::_;
 using testing::Contains;

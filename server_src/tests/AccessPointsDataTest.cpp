@@ -1,9 +1,8 @@
 #include <AccessPointsDataI.h>
 
+#include <algorithm>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-
-#include <algorithm>
 #include <variant>
 
 using namespace ::testing;

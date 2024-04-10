@@ -2,9 +2,8 @@
 
 #include "MessageSubscriberI.h"
 
-#include <zmq.hpp>
-
 #include <cstdint>
+#include <zmq.hpp>
 
 class MessageSubscriber : public MessageSubscriberI
 {
