@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MessagePublisherI.h"
+#include <MessagePublisherI.h>
 
 #include <cstdint>
 #include <zmq.hpp>

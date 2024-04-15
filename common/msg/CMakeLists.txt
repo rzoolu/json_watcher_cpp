@@ -14,7 +14,8 @@ endif()
 
 add_library(common_msg_obj_lib OBJECT)
 target_sources(common_msg_obj_lib
-    PRIVATE "Messaging.cpp"
+    PRIVATE "MessagePublisher.cpp"
+            "Messaging.cpp"
             "ProtoBufGuard.cpp"
  )
 
@@ -31,5 +32,9 @@ target_include_directories(common_msg_obj_lib PUBLIC "${PROTOC_OUTPUT_DIR}")
 
 target_link_libraries(common_msg_obj_lib PRIVATE common_compile_options)
 
+target_link_libraries(common_msg_obj_lib PRIVATE common_log_interface_lib)
 target_link_libraries(common_msg_obj_lib PUBLIC cppzmq)
 target_link_libraries(common_msg_obj_lib PUBLIC protobuf::libprotobuf-lite)
+
+# UT/googletest binary for common_msg_obj_lib
+add_subdirectory(tests)

@@ -23,7 +23,6 @@ target_sources(serverApp_tests PRIVATE
     "${SERVER_SRC_DIR}/ChangeToProtoMsgConverter.cpp"
     "${SERVER_SRC_DIR}/FileMonitor.cpp"
     "${SERVER_SRC_DIR}/JsonParser.cpp"
-    "${SERVER_SRC_DIR}/MessagePublisher.cpp"
     "${SERVER_SRC_DIR}/ServerApp.cpp"
  )
  # UT sources
@@ -32,7 +31,6 @@ target_sources(serverApp_tests PRIVATE
     "FileMonitorTest.cpp"
     "JsonParserTest.cpp"
     "Main.cpp"
-    "MessagePublisherTest.cpp"
     "ServerAppTest.cpp"
 )
 

@@ -5,7 +5,6 @@ target_sources(serverApp PRIVATE
     "ChangeToProtoMsgConverter.cpp"
     "FileMonitor.cpp"
     "JsonParser.cpp"
-    "MessagePublisher.cpp"
     "ServerApp.cpp"
     "ServerMain.cpp"
  )
