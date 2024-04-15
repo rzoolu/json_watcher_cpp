@@ -14,12 +14,12 @@ endif()
 
 add_library(common_msg_obj_lib OBJECT)
 target_sources(common_msg_obj_lib
-    PRIVATE "MessagePublisher.cpp"
-            "Messaging.cpp"
-            "ProtoBufGuard.cpp"
+    PRIVATE "src/MessagePublisher.cpp"
+            "src/Messaging.cpp"
+            "src/ProtoBufGuard.cpp"
  )
 
-set(PROTOC_OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cpp_gen")
+set(PROTOC_OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/proto_gen")
 
 protobuf_generate(LANGUAGE cpp
     TARGET common_msg_obj_lib
@@ -27,7 +27,7 @@ protobuf_generate(LANGUAGE cpp
     IMPORT_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/proto"
     PROTOS "${CMAKE_CURRENT_SOURCE_DIR}/proto/ApWatchI.proto")
 
-target_include_directories(common_msg_obj_lib PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(common_msg_obj_lib PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/inc")
 target_include_directories(common_msg_obj_lib PUBLIC "${PROTOC_OUTPUT_DIR}")
 
 target_link_libraries(common_msg_obj_lib PRIVATE common_compile_options)
