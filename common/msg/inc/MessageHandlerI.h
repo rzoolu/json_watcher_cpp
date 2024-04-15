@@ -3,7 +3,6 @@
 namespace msg
 {
 class MsgDescriptor;
-}
 
 class MessageHandlerI
 {
@@ -13,3 +12,4 @@ public:
 protected:
     ~MessageHandlerI() = default;
 };
+} // namespace msg

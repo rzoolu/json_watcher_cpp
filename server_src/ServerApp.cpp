@@ -2,10 +2,10 @@
 
 #include "ChangeToProtoMsgConverter.h"
 #include "JsonParserI.h"
-#include "MessagePublisherI.h"
 
 #include <Log.h>
-#include <Messaging.h>
+#include <Message.h>
+#include <MessagePublisherI.h>
 
 #include <algorithm>
 #include <cassert>
@@ -19,7 +19,7 @@ ServerApp::ServerApp(const std::filesystem::path& apFile)
       m_fileMonitor(FileMonitorI::create(apFile, *this)),
       m_jsonParser(JsonParserI::create()),
       m_apData(AccessPointsDataI::create()),
-      m_msgPublisher(MessagePublisherI::create(APP_TCP_PORT))
+      m_msgPublisher(msg::MessagePublisherI::create(APP_TCP_PORT))
 {
 }
 

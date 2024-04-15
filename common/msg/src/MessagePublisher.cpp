@@ -1,9 +1,14 @@
 
 #include "MessagePublisher.h"
+#include "MessageSendReceive.h"
 
 #include <Log.h>
+#include <Message.h>
 
 #include <string>
+
+namespace msg
+{
 
 MessagePublisherI::MessagePublisherFactory_t MessagePublisherI::create = [](std::uint16_t tcpPort)
 {
@@ -21,7 +26,7 @@ MessagePublisher::MessagePublisher(std::uint16_t tcpPort) : m_zmqContext(),
     LOG(DEBUG, "MessagePublisher bound to {}", tcpTransport);
 }
 
-void MessagePublisher::sendToSubscribers(const msg::MsgDescriptor& msg)
+void MessagePublisher::sendToSubscribers(const MsgDescriptor& msg)
 {
     if (!m_zmqSocket)
     {
@@ -41,3 +46,4 @@ void MessagePublisher::sendToSubscribers(const msg::MsgDescriptor& msg)
             *sendRes, toStr(msg.header.ifaceId), msg.header.msgId);
     }
 }
+} // namespace msg

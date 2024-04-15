@@ -1,13 +1,17 @@
 
 #include "MessageSubscriber.h"
 
-#include "MessageHandlerI.h"
+#include "MessageSendReceive.h"
 
 #include <ApWatchI.pb.h>
 #include <Log.h>
-#include <Messaging.h>
+#include <Message.h>
+#include <MessageHandlerI.h>
 
 #include <arpa/inet.h>
+
+namespace msg
+{
 
 MessageSubscriberI::MessageSubscriberFactory_t MessageSubscriberI::create = [](Host host,
                                                                                TcpPort port,
@@ -61,3 +65,4 @@ void MessageSubscriber::startReceiving()
         m_msgHandler.handleMessage(receivedMsg);
     }
 }
+} // namespace msg

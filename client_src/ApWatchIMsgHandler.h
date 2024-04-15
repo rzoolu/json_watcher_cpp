@@ -1,8 +1,8 @@
 #pragma once
 
-#include "MessageHandlerI.h"
+#include <MessageHandlerI.h>
 
-class ApWatchIMsgHandler : public MessageHandlerI
+class ApWatchIMsgHandler : public msg::MessageHandlerI
 {
 public:
     void handleMessage(const msg::MsgDescriptor& msg) override;

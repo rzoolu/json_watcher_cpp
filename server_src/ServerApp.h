@@ -6,9 +6,13 @@
 #include <filesystem>
 #include <memory>
 
+namespace msg
+{
+class MessagePublisherI;
+}
+
 class FileMonitorI;
 class JsonParserI;
-class MessagePublisherI;
 
 class ServerApp : public FileObserverI
 {
@@ -30,5 +34,5 @@ private:
     std::unique_ptr<FileMonitorI> m_fileMonitor;
     std::unique_ptr<JsonParserI> m_jsonParser;
     std::unique_ptr<AccessPointsDataI> m_apData;
-    std::unique_ptr<MessagePublisherI> m_msgPublisher;
+    std::unique_ptr<msg::MessagePublisherI> m_msgPublisher;
 };

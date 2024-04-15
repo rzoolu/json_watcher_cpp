@@ -1,10 +1,12 @@
 #pragma once
 
-#include <Messaging.h>
-
 #include <cstdint>
 #include <functional>
 #include <memory>
+
+namespace msg
+{
+class MsgDescriptor;
 
 class MessagePublisherI
 {
@@ -18,3 +20,4 @@ public:
 
     virtual ~MessagePublisherI() = default;
 };
+} // namespace msg

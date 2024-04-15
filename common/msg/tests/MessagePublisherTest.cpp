@@ -1,6 +1,7 @@
 #include <MessagePublisherI.h>
 
-#include <Messaging.h>
+#include <Message.h>
+#include <MessageSendReceive.h>
 
 #include <future>
 #include <gtest/gtest.h>
@@ -33,14 +34,14 @@ msg::MsgDescriptor subscribeAndRecieve()
 
 TEST(MessagePublisher, createAndDelete)
 {
-    auto publisher = MessagePublisherI::create(UT_TCP_PORT);
+    auto publisher = msg::MessagePublisherI::create(UT_TCP_PORT);
 
     ASSERT_TRUE(publisher);
 }
 
 TEST(MessagePublisher, sendMessage)
 {
-    auto publisher = MessagePublisherI::create(UT_TCP_PORT);
+    auto publisher = msg::MessagePublisherI::create(UT_TCP_PORT);
 
     auto subThreadRes =
         std::async(std::launch::async, subscribeAndRecieve);

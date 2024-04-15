@@ -3,8 +3,6 @@
 #include <InterfaceIds.h>
 
 #include <google/protobuf/message_lite.h>
-#include <zmq.hpp>
-
 #include <string>
 
 namespace msg
@@ -33,12 +31,17 @@ struct MsgDescriptor
 
     bool operator==(const MsgDescriptor&) const = default;
 
-    explicit operator bool() const;
+    explicit constexpr operator bool() const;
 };
 
 constexpr bool isMsgDescriptorValid(const MsgDescriptor& msg)
 {
     return isHeaderValid(msg.header);
+}
+
+constexpr MsgDescriptor::operator bool() const
+{
+    return isMsgDescriptorValid(*this);
 }
 
 template <typename MsgId>
@@ -77,8 +80,5 @@ MsgDescriptor createMsgDescriptor(IfaceId ifaceId,
         return MsgDescriptor{};
     }
 }
-
-zmq::send_result_t sendMsg(zmq::socket_t& socket, const MsgDescriptor& msg);
-MsgDescriptor receiveMsg(zmq::socket_t& socket);
 
 } // namespace msg

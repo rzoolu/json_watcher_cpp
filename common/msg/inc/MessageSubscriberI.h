@@ -1,12 +1,14 @@
 #pragma once
 
-#include <Messaging.h>
+#include <Message.h>
 
 #include <cstdint>
 #include <functional>
 #include <memory>
 #include <string_view>
 
+namespace msg
+{
 class MessageHandlerI;
 
 class MessageSubscriberI
@@ -27,3 +29,4 @@ public:
 
     virtual ~MessageSubscriberI() = default;
 };
+} // namespace msg

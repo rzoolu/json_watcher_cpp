@@ -1,9 +1,12 @@
 #pragma once
 
-#include "MessageSubscriberI.h"
+#include <MessageSubscriberI.h>
 
 #include <cstdint>
 #include <zmq.hpp>
+
+namespace msg
+{
 
 class MessageSubscriber : public MessageSubscriberI
 {
@@ -19,3 +22,4 @@ private:
 
     MessageHandlerI& m_msgHandler;
 };
+} // namespace msg

@@ -1,15 +1,12 @@
-#include <Messaging.h>
+#include "MessageSendReceive.h"
+
+#include <Message.h>
 
 #include <arpa/inet.h>
 #include <cstring>
 
 namespace msg
 {
-
-MsgDescriptor::operator bool() const
-{
-    return isMsgDescriptorValid(*this);
-}
 
 zmq::send_result_t sendMsg(zmq::socket_t& socket, const MsgDescriptor& msg)
 {

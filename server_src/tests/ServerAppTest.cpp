@@ -2,6 +2,7 @@
 #include <ServerApp.h>
 
 #include <ApWatchI.pb.h>
+#include <Message.h>
 
 #include "mocks/MockAccessPointsData.h"
 #include "mocks/MockFactory.h"
@@ -32,7 +33,7 @@ protected:
     ServerAppTest() : m_mockAccessPointsDataFactory(AccessPointsDataI::create),
                       m_mockFileMonitorFactory(FileMonitorI::create),
                       m_mockJsonParserFactory(JsonParserI::create),
-                      m_mockMessagePublisherFactory(MessagePublisherI::create)
+                      m_mockMessagePublisherFactory(msg::MessagePublisherI::create)
     {
         setupMocksInFactories();
     }
@@ -97,7 +98,7 @@ protected:
     MockFactory<AccessPointsDataI::AccessPointsDataFactory_t> m_mockAccessPointsDataFactory;
     MockFactory<FileMonitorI::FileMonitorFactory_t> m_mockFileMonitorFactory;
     MockFactory<JsonParserI::JsonParserFactory_t> m_mockJsonParserFactory;
-    MockFactory<MessagePublisherI::MessagePublisherFactory_t> m_mockMessagePublisherFactory;
+    MockFactory<msg::MessagePublisherI::MessagePublisherFactory_t> m_mockMessagePublisherFactory;
 
     MockAccessPointsData* m_mockAccessPointData = nullptr;
     MockFileMonitor* m_mockFileMonitor = nullptr;

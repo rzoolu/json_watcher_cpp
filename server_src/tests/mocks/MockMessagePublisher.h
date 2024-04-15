@@ -4,7 +4,7 @@
 
 #include <gmock/gmock.h>
 
-class MockMessagePublisher : public MessagePublisherI
+class MockMessagePublisher : public msg::MessagePublisherI
 {
 public:
     MOCK_METHOD(void, sendToSubscribers, (const msg::MsgDescriptor&), (override));

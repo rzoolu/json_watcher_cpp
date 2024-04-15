@@ -2,7 +2,7 @@
 
 #include "AccessPointsDataI.h"
 
-#include <Messaging.h>
+#include <Message.h>
 
 #include <string>
 

@@ -2,7 +2,7 @@
 
 #include <ApWatchI.pb.h>
 #include <Log.h>
-#include <Messaging.h>
+#include <Message.h>
 
 void ApWatchIMsgHandler::handleMessage(const msg::MsgDescriptor& msg)
 {
