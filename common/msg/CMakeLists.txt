@@ -34,7 +34,7 @@ target_include_directories(common_msg_obj_lib PUBLIC "${PROTOC_OUTPUT_DIR}")
 target_link_libraries(common_msg_obj_lib PRIVATE common_compile_options)
 
 target_link_libraries(common_msg_obj_lib PRIVATE common_log_interface_lib)
-target_link_libraries(common_msg_obj_lib PUBLIC cppzmq)
+target_link_libraries(common_msg_obj_lib PRIVATE cppzmq)
 target_link_libraries(common_msg_obj_lib PUBLIC protobuf::libprotobuf-lite)
 
 # UT/googletest binary for common_msg_obj_lib
