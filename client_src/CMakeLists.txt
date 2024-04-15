@@ -4,7 +4,6 @@ target_sources(clientApp PRIVATE
     "ApWatchIMsgHandler.cpp"
     "ClientApp.cpp"
     "ClientMain.cpp"
-    "MessageSubscriber.cpp"
 )
 
 target_include_directories(clientApp PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")

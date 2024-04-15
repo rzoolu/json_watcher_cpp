@@ -15,6 +15,7 @@ endif()
 add_library(common_msg_obj_lib OBJECT)
 target_sources(common_msg_obj_lib
     PRIVATE "src/MessagePublisher.cpp"
+            "src/MessageSubscriber.cpp"
             "src/Messaging.cpp"
             "src/ProtoBufGuard.cpp"
  )
