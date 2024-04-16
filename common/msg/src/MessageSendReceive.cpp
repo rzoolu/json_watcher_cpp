@@ -3,6 +3,7 @@
 #include <Message.h>
 
 #include <arpa/inet.h>
+#include <array>
 #include <cstring>
 
 namespace msg
@@ -14,12 +15,11 @@ zmq::send_result_t sendMsg(zmq::socket_t& socket, const MsgDescriptor& msg)
 
     static_assert(sizeof(msg.header.ifaceId) == sizeof(std::uint32_t));
 
-    const std::uint32_t headerBuf[numOfHeaderFields] = {
+    const std::array<std::uint32_t, numOfHeaderFields> headerBuf{
         htonl(static_cast<std::uint32_t>(msg.header.ifaceId)),
         htonl(msg.header.msgId)};
 
-    auto sendRes = socket.send(zmq::buffer(&headerBuf, sizeof(headerBuf)),
-                               zmq::send_flags::sndmore);
+    auto sendRes = socket.send(zmq::buffer(headerBuf), zmq::send_flags::sndmore);
     if (!sendRes)
     {
         return sendRes;
@@ -51,10 +51,12 @@ MsgDescriptor receiveMsg(zmq::socket_t& socket)
         return {};
     }
 
-    std::uint32_t netOrderHeader[numOfHeaderFields];
-    static_assert(expectedHeaderSize == sizeof(netOrderHeader));
+    std::array<std::uint32_t, numOfHeaderFields> netOrderHeader{};
 
-    std::memcpy(&netOrderHeader, msgHeader.data(), sizeof(netOrderHeader));
+    static_assert(expectedHeaderSize ==
+                  netOrderHeader.size() * sizeof(decltype(netOrderHeader)::value_type));
+
+    std::memcpy(netOrderHeader.data(), msgHeader.data(), expectedHeaderSize);
 
     MsgDescriptor msgDesc;
     static_assert(sizeof(msgDesc.header.ifaceId) == sizeof(std::uint32_t));

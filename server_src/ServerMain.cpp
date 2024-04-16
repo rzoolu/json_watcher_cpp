@@ -38,11 +38,12 @@ OptionValMap createOptionMap(const int argc, char* argv[])
 
     for (auto i = 1; i < argc; ++i)
     {
-        std::string_view option(argv[i]);
-        std::string_view value;
+        const std::string_view option(argv[i]);
 
         if (isValidOption(option))
         {
+            std::string_view value;
+
             // if there's next arg which is not option, use it as option value
             if (i + 1 < argc && !isValidOption(argv[i + 1]))
             {

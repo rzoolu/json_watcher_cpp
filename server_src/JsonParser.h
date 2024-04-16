@@ -13,6 +13,6 @@ public:
     virtual std::optional<AccessPointMap_t> parseFromFile(const std::filesystem::path& file) override;
 
 private:
-    bool containsMandatoryData(const nlohmann::json& data);
-    AccessPointMap_t creaateAccessPointMap(const nlohmann::json& data);
+    bool containsMandatoryData(const nlohmann::json& ap);
+    AccessPointMap_t createAccessPointMap(const nlohmann::json& aps);
 };

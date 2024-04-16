@@ -36,7 +36,7 @@ std::optional<AccessPointMap_t> JsonParser::parseFromStream(std::istream& istrea
         return std::nullopt;
     }
 
-    return creaateAccessPointMap(inputData["access_points"]);
+    return createAccessPointMap(inputData["access_points"]);
 }
 
 std::optional<AccessPointMap_t> JsonParser::parseFromFile(const std::filesystem::path& file)
@@ -53,7 +53,7 @@ std::optional<AccessPointMap_t> JsonParser::parseFromFile(const std::filesystem:
 
     return parseFromStream(input);
 }
-AccessPointMap_t JsonParser::creaateAccessPointMap(const json& aps)
+AccessPointMap_t JsonParser::createAccessPointMap(const json& aps)
 {
     AccessPointMap_t apMap;
 
@@ -61,7 +61,7 @@ AccessPointMap_t JsonParser::creaateAccessPointMap(const json& aps)
     {
         if (containsMandatoryData(ap))
         {
-            const auto ssid = ap["ssid"];
+            const auto& ssid = ap["ssid"];
 
             apMap.emplace(ssid,
                           AccessPoint{ssid, ap["snr"], ap["channel"]});

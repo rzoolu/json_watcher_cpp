@@ -2,6 +2,10 @@
 
 #include <Log.h>
 
+#include <memory>
+#include <utility>
+#include <vector>
+
 AccessPointsDataI::AccessPointsDataFactory_t AccessPointsDataI::create = []()
 {
     return std::make_unique<AccessPointsData>();

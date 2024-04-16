@@ -3,7 +3,8 @@
 #include <Log.h>
 
 #include <cstddef>
-#include <exception>
+#include <filesystem>
+#include <stdexcept>
 #include <sys/inotify.h>
 #include <unistd.h>
 
@@ -70,10 +71,12 @@ void FileMonitor::waitForFileEvents()
 
     while (fileExists)
     {
-        std::byte eventBuf[1024]
-            __attribute__((aligned(__alignof__(struct inotify_event))));
+        constexpr auto eventBufSize = 1024U;
 
-        const auto length = read(m_inotifyFileDesc, eventBuf, sizeof(eventBuf));
+        std::byte eventBuf[eventBufSize]
+            __attribute__((aligned(__alignof__(inotify_event))));
+
+        const auto length = read(m_inotifyFileDesc, eventBuf, eventBufSize);
         if (length < 0)
         {
             LOG(ERROR, "Cannot read inotify descriptor.");
@@ -81,12 +84,12 @@ void FileMonitor::waitForFileEvents()
             throw std::runtime_error("inotify file desc. read failure");
         }
 
-        const struct inotify_event* event = NULL;
+        const inotify_event* event = nullptr;
 
         for (const std::byte* ptr = eventBuf; ptr < eventBuf + length;
              ptr += sizeof(struct inotify_event) + event->len)
         {
-            event = reinterpret_cast<const struct inotify_event*>(ptr);
+            event = reinterpret_cast<const inotify_event*>(ptr);
 
             if (event->mask & IN_MODIFY)
             {
