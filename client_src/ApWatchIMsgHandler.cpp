@@ -4,7 +4,8 @@
 #include <Log.h>
 #include <Message.h>
 
-void ApWatchIMsgHandler::handleMessage(const msg::MsgDescriptor& msg)
+msg::MessageHandlerI::AfterHandleAction
+ApWatchIMsgHandler::handleMessage(const msg::MsgDescriptor& msg)
 {
 
     if (msg.header.ifaceId == msg::IfaceId::ApWatchI)
@@ -44,4 +45,6 @@ void ApWatchIMsgHandler::handleMessage(const msg::MsgDescriptor& msg)
             break;
         }
     }
+
+    return MessageHandlerI::ContinueReceiving;
 }

@@ -50,7 +50,8 @@ void MessageSubscriber::startReceiving()
         return;
     }
 
-    while (true)
+    auto nextAction = MessageHandlerI::ContinueReceiving;
+    while (nextAction == MessageHandlerI::ContinueReceiving)
     {
         auto receivedMsg = msg::receiveMsg(m_zmqSocket);
 
@@ -62,7 +63,7 @@ void MessageSubscriber::startReceiving()
         LOG(DEBUG, "ZMQ socket got message, iface={}, msgId={}",
             msg::toStr(receivedMsg.header.ifaceId), receivedMsg.header.msgId);
 
-        m_msgHandler.handleMessage(receivedMsg);
+        nextAction = m_msgHandler.handleMessage(receivedMsg);
     }
 }
 } // namespace msg

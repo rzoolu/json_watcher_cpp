@@ -5,5 +5,5 @@
 class ApWatchIMsgHandler : public msg::MessageHandlerI
 {
 public:
-    void handleMessage(const msg::MsgDescriptor& msg) override;
+    AfterHandleAction handleMessage(const msg::MsgDescriptor& msg) override;
 };
