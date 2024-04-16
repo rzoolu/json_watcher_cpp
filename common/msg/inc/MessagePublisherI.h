@@ -6,7 +6,7 @@
 
 namespace msg
 {
-class MsgDescriptor;
+struct MsgDescriptor;
 
 class MessagePublisherI
 {

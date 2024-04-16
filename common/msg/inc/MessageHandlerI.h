@@ -2,7 +2,7 @@
 
 namespace msg
 {
-class MsgDescriptor;
+struct MsgDescriptor;
 
 class MessageHandlerI
 {
