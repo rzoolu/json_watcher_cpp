@@ -36,6 +36,25 @@ ApWatchIMsgHandler::handleMessage(const msg::MsgDescriptor& msg)
             modifiedApMsg.ParseFromString(msg.body);
 
             LOG(DEBUG, "ModifiedApParams message, ssid is: {}", modifiedApMsg.oldap().ssid());
+
+            const auto& changedParams = modifiedApMsg.changedparams();
+
+            for (auto param : changedParams)
+            {
+                switch (param)
+                {
+                case ApWatchI::ModifiedApParamsMsg::SNR:
+                    LOG(DEBUG, "SNR has changed from {} to {}", modifiedApMsg.oldap().snr(), modifiedApMsg.newap().snr());
+                    break;
+
+                case ApWatchI::ModifiedApParamsMsg::channnel:
+                    LOG(DEBUG, "channel has changed from {} to {}", modifiedApMsg.oldap().channel(), modifiedApMsg.newap().channel());
+                    break;
+
+                default:
+                    break;
+                }
+            }
         }
         break;
 
