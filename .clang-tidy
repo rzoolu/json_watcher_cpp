@@ -1,27 +1,24 @@
----
-Checks: "*,
-        -abseil-*,
-        -altera-*,
-        -android-*,
-        -fuchsia-*,
-        -google-*,
-        -llvm*,
-        -modernize-use-trailing-return-type,
-        -zircon-*,
-        -readability-else-after-return,
-        -readability-static-accessed-through-instance,
-        -readability-avoid-const-params-in-decls,
-        -cppcoreguidelines-non-private-member-variables-in-classes,
-        -misc-non-private-member-variables-in-classes,
-        -misc-include-cleaner,
+Checks: "-*,
+         bugprone-*,
+         clang-analyzer-*,
+         concurrency-*,
+         cppcoreguidelines-*,
+         misc-*,
+         modernize-*,
+         performance-*,
+         portability-*,
+         readability-*,
+         -modernize-use-trailing-return-type,
+         -misc-include-cleaner,
 "
-WarningsAsErrors: ''
-HeaderFilterRegex: ''
-FormatStyle:     none
 
 CheckOptions:
   - key: readability-identifier-length.IgnoredVariableNames
-    value: 'x|y|z'
+    value: 'ap|aps'
   - key: readability-identifier-length.IgnoredParameterNames
-    value: 'x|y|z'
+    value: 'ap|aps'
+
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+FormatStyle:     none
 

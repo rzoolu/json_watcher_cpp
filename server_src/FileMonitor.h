@@ -4,6 +4,8 @@
 
 #include <filesystem>
 
+struct inotify_event;
+
 class FileMonitor : public FileMonitorI
 {
 public:
@@ -13,6 +15,7 @@ public:
 
 private:
     void waitForFileEvents();
+    bool handleFileEvent(const inotify_event* fileEvent);
 
 private:
     static constexpr int INVALID_FD = -1;

@@ -67,16 +67,19 @@ void FileMonitor::startMonitoring()
 
 void FileMonitor::waitForFileEvents()
 {
-    bool fileExists = true;
+    constexpr auto numOfEvents = 128U;
 
-    while (fileExists)
+    // Actual max. number of events will differ due to flex-array
+    // in inotify_event structure.
+    std::array<inotify_event, numOfEvents> eventBuf;
+
+    constexpr auto eventBufSize =
+        eventBuf.size() * sizeof(decltype(eventBuf)::value_type);
+
+    bool continueMonitoring = true;
+    while (continueMonitoring)
     {
-        constexpr auto eventBufSize = 1024U;
-
-        std::byte eventBuf[eventBufSize]
-            __attribute__((aligned(__alignof__(inotify_event))));
-
-        const auto length = read(m_inotifyFileDesc, eventBuf, eventBufSize);
+        const auto length = read(m_inotifyFileDesc, eventBuf.data(), eventBufSize);
         if (length < 0)
         {
             LOG(ERROR, "Cannot read inotify descriptor.");
@@ -85,29 +88,44 @@ void FileMonitor::waitForFileEvents()
         }
 
         const inotify_event* event = nullptr;
+        const std::byte* eventBufBytes =
+            reinterpret_cast<std::byte*>(eventBuf.data());
 
-        for (const std::byte* ptr = eventBuf; ptr < eventBuf + length;
-             ptr += sizeof(struct inotify_event) + event->len)
+        for (const std::byte* ptr = eventBufBytes; ptr < eventBufBytes + length;
+             ptr += sizeof(inotify_event) + event->len)
         {
             event = reinterpret_cast<const inotify_event*>(ptr);
 
-            if (event->mask & IN_MODIFY)
+            continueMonitoring = handleFileEvent(event);
+            if (!continueMonitoring)
             {
-                LOG(INFO, "The file was modified.");
-                m_observer.handleFileEvent(FileObserverI::FileModified);
-            }
-            else if (event->mask & IN_DELETE_SELF || event->mask & IN_MOVE_SELF)
-            {
-                LOG(INFO, "The file was deleted. Stop monitoring file.");
-                m_observer.handleFileEvent(FileObserverI::FileDeleted);
-
-                fileExists = false;
                 break;
-            }
-            else
-            {
-                LOG(DEBUG, "Other event on monitored file: {}", event->mask);
             }
         }
     }
+}
+
+bool FileMonitor::handleFileEvent(const inotify_event* fileEvent)
+{
+
+    bool continueMonitoring = true;
+
+    if (fileEvent->mask & IN_MODIFY)
+    {
+        LOG(INFO, "The file was modified.");
+        m_observer.handleFileEvent(FileObserverI::FileModified);
+    }
+    else if (fileEvent->mask & IN_DELETE_SELF || fileEvent->mask & IN_MOVE_SELF)
+    {
+        LOG(INFO, "The file was deleted. Stop monitoring file.");
+        m_observer.handleFileEvent(FileObserverI::FileDeleted);
+
+        continueMonitoring = false;
+    }
+    else
+    {
+        LOG(DEBUG, "Other event on monitored file: {}", fileEvent->mask);
+    }
+
+    return continueMonitoring;
 }
