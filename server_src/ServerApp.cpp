@@ -27,7 +27,7 @@ ServerApp::~ServerApp() = default;
 
 void ServerApp::run()
 {
-    m_fileMonitor->startMonitoring();
+    m_fileMonitor->startMonitoring(std::chrono::milliseconds(50));
 }
 
 void ServerApp::handleFileEvent(FileObserverI::Event event)

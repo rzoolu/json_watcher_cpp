@@ -7,5 +7,5 @@
 class MockFileMonitor : public FileMonitorI
 {
 public:
-    MOCK_METHOD(void, startMonitoring, (), (override));
+    MOCK_METHOD(void, startMonitoring, (std::chrono::milliseconds), (override));
 };

@@ -137,7 +137,7 @@ TEST_F(ServerAppTest, whenServerAppIsCreatedFileMonitorIsCratedWithProperPath)
 
 TEST_F(ServerAppCreatedTest, whenServerAppIsStartedFileMonitoringBegins)
 {
-    EXPECT_CALL(*m_mockFileMonitor, startMonitoring);
+    EXPECT_CALL(*m_mockFileMonitor, startMonitoring(_));
 
     m_serverApp.run();
 }
