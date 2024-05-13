@@ -135,8 +135,26 @@ TEST_F(ServerAppTest, whenServerAppIsCreatedFileMonitorIsCratedWithProperPath)
     ServerApp app(DUMMY_JSON_PATH);
 }
 
+TEST_F(ServerAppCreatedTest, whenServerAppIsStartedWithhInvalidFileMonitoringDoesntStart)
+{
+    EXPECT_CALL(*m_mockJsonParser, parseFromFile).WillOnce(Return(std::nullopt));
+
+    EXPECT_CALL(*m_mockAccessPointData, update(_)).Times(0);
+    EXPECT_CALL(*m_mockFileMonitor, startMonitoring(_)).Times(0);
+
+    m_serverApp.run();
+}
+
 TEST_F(ServerAppCreatedTest, whenServerAppIsStartedFileMonitoringBegins)
 {
+    const AccessPoint validAp{"ssidx", 1, 1};
+    const auto validParsingResult =
+        std::make_optional<AccessPointMap_t>({{validAp.SSID, validAp}});
+
+    EXPECT_CALL(*m_mockJsonParser, parseFromFile).WillOnce(Return(validParsingResult));
+
+    EXPECT_CALL(*m_mockAccessPointData, update(_));
+
     EXPECT_CALL(*m_mockFileMonitor, startMonitoring(_));
 
     m_serverApp.run();

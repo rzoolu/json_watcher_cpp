@@ -27,7 +27,14 @@ ServerApp::~ServerApp() = default;
 
 void ServerApp::run()
 {
-    m_fileMonitor->startMonitoring(std::chrono::milliseconds(50));
+    const auto apMap = m_jsonParser->parseFromFile(m_apFile);
+
+    if (apMap)
+    {
+        m_apData->update(*apMap);
+
+        m_fileMonitor->startMonitoring(std::chrono::milliseconds(50));
+    }
 }
 
 void ServerApp::handleFileEvent(FileObserverI::Event event)
