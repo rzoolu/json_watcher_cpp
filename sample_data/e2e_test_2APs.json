@@ -1,0 +1,14 @@
+{
+    "access_points": [
+        {
+            "ssid": "A_AP",
+            "snr": 11,
+            "channel": 1
+        },
+        {
+            "ssid": "C_AP",
+            "snr": 33,
+            "channel": 3
+        }
+    ]
+}

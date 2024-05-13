@@ -31,15 +31,24 @@ target_sources(serverApp_tests PRIVATE
     "FileMonitorTest.cpp"
     "JsonParserTest.cpp"
     "Main.cpp"
+    "ServerAppE2ETest.cpp"
     "ServerAppTest.cpp"
 )
 
 # Copy UT test data file to UT binary directory
 configure_file("${SERVER_SRC_DIR}/../sample_data/access_points.json"
     "${CMAKE_CURRENT_BINARY_DIR}/access_points.json" COPYONLY)
+configure_file("${SERVER_SRC_DIR}/../sample_data/e2e_test_1AP.json"
+    "${CMAKE_CURRENT_BINARY_DIR}/e2e_test_1AP.json" COPYONLY)
+configure_file("${SERVER_SRC_DIR}/../sample_data/e2e_test_1APmodified_ch.json"
+    "${CMAKE_CURRENT_BINARY_DIR}/e2e_test_1APmodified_ch.json" COPYONLY)
+configure_file("${SERVER_SRC_DIR}/../sample_data/e2e_test_2APs.json"
+    "${CMAKE_CURRENT_BINARY_DIR}/e2e_test_2APs.json" COPYONLY)
+configure_file("${SERVER_SRC_DIR}/../sample_data/e2e_test_3APs.json"
+    "${CMAKE_CURRENT_BINARY_DIR}/e2e_test_3APs.json" COPYONLY)
+
 
 gtest_discover_tests(serverApp_tests)
-
 
 target_include_directories(serverApp_tests PRIVATE "${SERVER_SRC_DIR}")
 
