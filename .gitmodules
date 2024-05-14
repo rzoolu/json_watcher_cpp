@@ -11,4 +11,6 @@
 	path = 3rdp/protobuf
 	url = git@github.com:protocolbuffers/protobuf.git
 	ignore = untracked
-
+[submodule "3rdp/ftxui"]
+	path = 3rdp/ftxui
+	url = git@github.com:ArthurSonzogni/FTXUI.git
