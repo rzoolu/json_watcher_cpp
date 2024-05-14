@@ -239,3 +239,47 @@ TEST_F(ServerAppE2ETest, whenFileIsModifiedAndOneApWasModifiedCorretMsgIsSent)
 
     ASSERT_EQ(msgDesc.header, expectedMsgHeader);
 }
+
+TEST_F(ServerAppE2ETest, whenFileIsModifiedAndOneApWasModifiedAndThenAnotherApAddedCorretMsgsAreSent)
+{
+    overwriteFile(TEST_1AP_mod_ch_JSON_PATH, TEST_MONITORED_JSON_PATH);
+
+    ServerApp app(TEST_MONITORED_JSON_PATH);
+
+    std::vector<msg::MsgDescriptor> msgDescriptorsInOrder;
+
+    EXPECT_CALL(*m_mockMessagePublisher, sendToSubscribers(_))
+        .Times(2)
+        .WillRepeatedly([&msgDescriptorsInOrder](const auto& msgDesc)
+                        { msgDescriptorsInOrder.push_back(msgDesc); });
+
+    auto oneApModified = [](const auto& path)
+    {
+        overwriteFile(TEST_1AP_JSON_PATH, path);
+    };
+
+    auto oneApAdded = [](const auto& path)
+    {
+        overwriteFile(TEST_2APS_JSON_PATH, path);
+    };
+
+    const auto operationDelay = milliseconds(100);
+    auto fileOpsThread = scheduleDeleyedFileOperations(TEST_MONITORED_JSON_PATH,
+                                                       operationDelay,
+                                                       oneApModified,
+                                                       oneApAdded,
+                                                       deleteFile);
+    app.run();
+    fileOpsThread.join();
+
+    const auto expectedFirstMsgHeader =
+        msg::createMessageHeader(msg::IfaceId::ApWatchI, ApWatchI::ModifiedApParams);
+
+    const auto expectedSecondMsgHeader =
+        msg::createMessageHeader(msg::IfaceId::ApWatchI, ApWatchI::NewAp);
+
+    ASSERT_EQ(2, msgDescriptorsInOrder.size()) << "Not all required messages were sent.";
+
+    ASSERT_EQ(msgDescriptorsInOrder[0].header, expectedFirstMsgHeader);
+    ASSERT_EQ(msgDescriptorsInOrder[1].header, expectedSecondMsgHeader);
+}
