@@ -12,6 +12,9 @@ tags/v3.11.3
 
 cppzmq:
 tags/v4.10.0
+
+ftxui:
+tag/v4.1.1
 ```
 
 Initialize with:
