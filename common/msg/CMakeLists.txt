@@ -7,8 +7,6 @@ find_package(Protobuf REQUIRED PATHS ${PROTOBUF_INSTALL_CMAKE_CFG_DIR})
 
 if (Protobuf_FOUND)
     message(STATUS "Protobuf package found, version: ${Protobuf_VERSION}")
-else()
-    message(SEND_ERROR "Protobuf package not found.")
 endif()
 
 

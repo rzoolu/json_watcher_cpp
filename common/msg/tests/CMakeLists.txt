@@ -5,8 +5,6 @@ find_package(GTest REQUIRED PATHS ${GOOGLETEST_INSTALL_CMAKE_CFG_DIR})
 
 if (GTest_FOUND)
     message(STATUS "GTest package found, version: ${GTest_VERSION}")
-else()
-    message(SEND_ERROR "GTest package not found.")
 endif()
 
 enable_testing()
