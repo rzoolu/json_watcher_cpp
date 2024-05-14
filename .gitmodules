@@ -14,3 +14,4 @@
 [submodule "3rdp/ftxui"]
 	path = 3rdp/ftxui
 	url = git@github.com:ArthurSonzogni/FTXUI.git
+	ignore = untracked

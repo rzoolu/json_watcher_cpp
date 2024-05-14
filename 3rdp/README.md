@@ -35,8 +35,7 @@ in main repository after fresh clone.
 2. googletest & gmock:
     ```
     cd 3rdp/googletest
-    mkdir build
-    cd build
+    mkdir build && cd build
     cmake .. -DCMAKE_CXX_STANDARD=20 -DCMAKE_INSTALL_PREFIX=./
     cmake --build . --config Release --target install
     ```
@@ -45,3 +44,11 @@ in main repository after fresh clone.
 3. cppzmq: header only library embedded to main CMake project with add_subdirectory()
 
 4. json: headers only library embedded to main CMake project with add_subdirectory()
+
+5. ftxui:
+    ```
+    cd 3rdp/ftxui
+    mkdir build && cd build
+    cmake .. -DFTXUI_BUILD_EXAMPLES=OFF -DFTXUI_BUILD_DOCS=OFF -DCMAKE_INSTALL_PREFIX=./
+    cmake --build . --config Release --target install
+    ```
