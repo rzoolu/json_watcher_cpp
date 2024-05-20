@@ -1,4 +1,5 @@
 #include "ApWatchIMsgHandler.h"
+#include "ClientUI.h"
 
 #include <ApWatchI.pb.h>
 #include <Log.h>
@@ -10,12 +11,15 @@ ApWatchIMsgHandler::handleMessage(const msg::MsgDescriptor& msg)
 
     if (msg.header.ifaceId == msg::IfaceId::ApWatchI)
     {
+        auto& clientUi = ClientUI::getInstance();
+
         switch (msg.header.msgId)
         {
         case ApWatchI::NewAp:
         {
             ApWatchI::NewApMsg newApMsg;
             newApMsg.ParseFromString(msg.body);
+            clientUi.drawMessage(newApMsg);
 
             LOG(DEBUG, "NewAp message: ssid is: {}", newApMsg.ap().ssid());
         }
@@ -25,6 +29,7 @@ ApWatchIMsgHandler::handleMessage(const msg::MsgDescriptor& msg)
         {
             ApWatchI::RemovedApMsg removedApMsg;
             removedApMsg.ParseFromString(msg.body);
+            clientUi.drawMessage(removedApMsg);
 
             LOG(DEBUG, "RemovedAp message, ssid is: {}", removedApMsg.ap().ssid());
         }
@@ -34,6 +39,7 @@ ApWatchIMsgHandler::handleMessage(const msg::MsgDescriptor& msg)
         {
             ApWatchI::ModifiedApParamsMsg modifiedApMsg;
             modifiedApMsg.ParseFromString(msg.body);
+            clientUi.drawMessage(modifiedApMsg);
 
             LOG(DEBUG, "ModifiedApParams message, ssid is: {}", modifiedApMsg.oldap().ssid());
 
