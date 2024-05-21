@@ -41,9 +41,9 @@ in main repository after fresh clone.
     ```
     Use binaries and headers from 3rdp/googletest/build.
 
-3. cppzmq: header only library embedded to main CMake project with add_subdirectory()
+3. cppzmq: no action required (header only library embedded to main CMake project with add_subdirectory())
 
-4. json: headers only library embedded to main CMake project with add_subdirectory()
+4. json: no action required (headers only library embedded to main CMake project with add_subdirectory())
 
 5. ftxui:
     ```
