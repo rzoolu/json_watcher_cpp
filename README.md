@@ -1,4 +1,6 @@
-### json_watcher_cpp build isntruction
+### json_watcher_cpp build instruction
+
+Requires C++20 compatible compiler and standard library.
 
 1. `git clone & git submodule update --init --recursive`
 2. Build thrid party dependecies, as desribed in [3rdp/README.md](3rdp/README.md)
