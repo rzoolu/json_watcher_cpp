@@ -23,8 +23,11 @@ struct LogImpl
 
     static void log(LogLevel level, const std::string& msg, const std::source_location& location)
     {
+        const auto* const fileName = location.file_name();
+        const auto line = location.line();
+
         std::cerr << std::vformat(logFormats[level],
-                                  std::make_format_args(location.file_name(), location.line(), msg));
+                                  std::make_format_args(fileName, line, msg));
     }
 };
 
