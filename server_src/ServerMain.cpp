@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 
     if (options.contains(OPTION_DEBUG))
     {
-        setLogLevel(DEBUG);
+        Log::setLogLevel(DEBUG);
         debugArgv(argc, argv);
     }
 

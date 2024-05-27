@@ -5,7 +5,7 @@
 
 int main(int argc, char** argv)
 {
-    setLogLevel(DEBUG);
+    Log::setLogLevel(DEBUG);
 
     testing::InitGoogleTest(&argc, argv);
 

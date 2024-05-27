@@ -62,13 +62,12 @@ int main(const int argc, char* argv[])
 
     if (options.contains(OPTION_DEBUG))
     {
-        setLogLevel(DEBUG);
+        Log::setLogLevel(DEBUG);
     }
     else
     {
-        // disable all non-critical standard output logging
-        // to allow client's text UI.
-        setLogLevel(ERROR);
+        // disable logging to allow client's text UI.
+        Log::setLogLevel(LOGGING_DISABLED);
     }
 
     ClientApp app;

@@ -1,16 +1,33 @@
 #include <array>
+#include <cassert>
 #include <format>
 #include <iostream>
 #include <source_location>
 
 enum LogLevel
 {
-    ERROR,
-    INFO,
-    DEBUG,
+    LOGGING_DISABLED = -1,
+
+    ERROR = 0,
+    INFO = 1,
+    DEBUG = 2,
 
     LogLevelCount
 };
+
+// Simple logger based on std::format. Every message is prepended with log severity,
+// file name and line number.
+// Usage:
+//          // set maximum logging level
+//          Log::setLogLevel(DEBUG);
+//          // disable logging
+//          Log::setLogLevel(LOGGING_DISABLED);
+//          // Log single entry at DEBUG level.
+//          LOG(DEBUG, "Name: {} Height: {}", name, height);
+//
+
+namespace Log
+{
 
 struct LogImpl
 {
@@ -23,10 +40,12 @@ struct LogImpl
 
     static void log(LogLevel level, const std::string& msg, const std::source_location& location)
     {
-        const auto* const fileName = location.file_name();
+        assert(level > LOGGING_DISABLED && level < LogLevelCount);
+
+        const auto* fileName = location.file_name();
         const auto line = location.line();
 
-        std::cerr << std::vformat(logFormats[level],
+        std::clog << std::vformat(logFormats[level],
                                   std::make_format_args(fileName, line, msg));
     }
 };
@@ -35,9 +54,11 @@ inline void setLogLevel(LogLevel level)
 {
     if (level < LogLevelCount)
     {
-        LogImpl::currentLevel = level;
+        Log::LogImpl::currentLevel = level;
     }
 }
+
+} // namespace Log
 
 template <typename... Args>
 struct LOG
@@ -45,11 +66,11 @@ struct LOG
     LOG(LogLevel level,
         std::format_string<Args...> fmt,
         Args&&... args,
-        const std::source_location location = std::source_location::current())
+        const std::source_location& location = std::source_location::current())
     {
-        if (LogImpl::currentLevel >= level)
+        if (Log::LogImpl::currentLevel >= level)
         {
-            LogImpl::log(level, std::format(fmt, std::forward<Args>(args)...), location);
+            Log::LogImpl::log(level, std::format(fmt, std::forward<Args>(args)...), location);
         }
     }
 };

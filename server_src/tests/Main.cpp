@@ -6,7 +6,7 @@
 int main(int argc, char** argv)
 {
     ProtoBufGuard pbGuard;
-    setLogLevel(DEBUG);
+    Log::setLogLevel(DEBUG);
 
     testing::InitGoogleTest(&argc, argv);
 
