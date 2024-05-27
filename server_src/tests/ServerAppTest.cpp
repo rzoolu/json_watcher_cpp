@@ -24,7 +24,7 @@ using testing::StartsWith;
 namespace
 {
 const std::filesystem::path DUMMY_JSON_PATH("/dummy/path/ap.json");
-constexpr auto APP_TCP_PORT = 8282;
+constexpr msg::MessagePublisherI::TcpPort APP_TCP_PORT = 8282;
 } // namespace
 
 class ServerAppTest : public testing::Test

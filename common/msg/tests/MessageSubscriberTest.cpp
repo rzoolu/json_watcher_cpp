@@ -14,7 +14,7 @@ using testing::Return;
 
 namespace
 {
-constexpr std::uint16_t UT_TCP_PORT = 8181;
+constexpr msg::MessageSubscriberI::TcpPort UT_TCP_PORT = 8181;
 
 } // namespace
 

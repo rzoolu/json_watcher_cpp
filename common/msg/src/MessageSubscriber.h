@@ -14,6 +14,9 @@ public:
     MessageSubscriber(Host host, TcpPort port, msg::IfaceId ifaceId, MessageHandlerI& msgHandler);
     ~MessageSubscriber() override = default;
 
+    MessageSubscriber(const MessageSubscriber&) = delete;
+    MessageSubscriber& operator=(const MessageSubscriber&) = delete;
+
     void startReceiving() override;
 
 private:

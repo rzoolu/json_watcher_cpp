@@ -4,6 +4,9 @@ namespace msg
 {
 struct MsgDescriptor;
 
+// MessageHandlerI used as and observer interface with MessageSubscriberI.
+// Allows to handle incoming messages when they are received.
+
 class MessageHandlerI
 {
 public:

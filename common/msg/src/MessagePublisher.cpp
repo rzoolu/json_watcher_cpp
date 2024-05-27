@@ -10,13 +10,13 @@
 namespace msg
 {
 
-MessagePublisherI::MessagePublisherFactory_t MessagePublisherI::create = [](std::uint16_t tcpPort)
+MessagePublisherI::MessagePublisherFactory_t MessagePublisherI::create = [](TcpPort tcpPort)
 {
     return std::make_unique<MessagePublisher>(tcpPort);
 };
 
-MessagePublisher::MessagePublisher(std::uint16_t tcpPort) : m_zmqContext(),
-                                                            m_zmqSocket(m_zmqContext, zmq::socket_type::pub)
+MessagePublisher::MessagePublisher(TcpPort tcpPort) : m_zmqContext(),
+                                                      m_zmqSocket(m_zmqContext, zmq::socket_type::pub)
 {
     std::string tcpTransport("tcp://*:");
     tcpTransport.append(std::to_string(tcpPort));

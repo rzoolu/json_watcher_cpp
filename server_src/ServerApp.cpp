@@ -12,7 +12,7 @@
 #include <string>
 #include <variant>
 
-constexpr auto APP_TCP_PORT = 8282;
+constexpr msg::MessagePublisherI::TcpPort APP_TCP_PORT = 8282;
 
 ServerApp::ServerApp(const std::filesystem::path& apFile)
     : m_apFile(apFile),

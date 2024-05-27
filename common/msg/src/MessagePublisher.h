@@ -10,8 +10,11 @@ namespace msg
 class MessagePublisher : public MessagePublisherI
 {
 public:
-    MessagePublisher(std::uint16_t tcpPort);
+    MessagePublisher(TcpPort tcpPort);
     ~MessagePublisher() override = default;
+
+    MessagePublisher(const MessagePublisher&) = delete;
+    MessagePublisher& operator=(const MessagePublisher&) = delete;
 
     void sendToSubscribers(const MsgDescriptor& msg) override;
 

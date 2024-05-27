@@ -6,7 +6,7 @@
 #include <Message.h>
 #include <MessageSubscriberI.h>
 
-constexpr auto APP_TCP_PORT = 8282;
+constexpr msg::MessageSubscriberI::TcpPort APP_TCP_PORT = 8282;
 
 void ClientApp::run()
 {

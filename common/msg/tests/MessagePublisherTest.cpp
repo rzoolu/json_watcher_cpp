@@ -10,7 +10,7 @@
 
 namespace
 {
-constexpr std::uint16_t UT_TCP_PORT = 8181;
+constexpr msg::MessagePublisherI::TcpPort UT_TCP_PORT = 8181;
 
 msg::MsgDescriptor subscribeAndRecieve()
 {

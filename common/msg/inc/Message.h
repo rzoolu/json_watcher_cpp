@@ -5,6 +5,11 @@
 #include <google/protobuf/message_lite.h>
 #include <string>
 
+// MsgDescriptor - generic representation of serialized message.
+// Consist of MsgHeader(defines unique interface and message ids) and
+// message body to be deserialized with protobuf.
+// MsgDescriptors are used to sent and receive message.
+
 namespace msg
 {
 
